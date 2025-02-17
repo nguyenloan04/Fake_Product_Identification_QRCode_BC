@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react'
 
 // Import Components
-import Seat from './Seat'
+// import Seat from './Seat'
 
 // Import Assets
-import close from '../assets/close.svg'
+// import close from '../assets/close.svg'
 
-const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
+// const SeatChart = ({ occasion, tokenMaster, provider, setToggle }) => {
+//
+//   return (
+//     <div className="occasion">
+//
+//     </div >
+//   );
+// }
 
-  return (
-    <div className="occasion">
-
-    </div >
-  );
-}
-
-export default SeatChart;
+// export default SeatChart;
