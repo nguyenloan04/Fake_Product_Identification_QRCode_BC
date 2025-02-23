@@ -1,11 +1,10 @@
 import React from "react";
-import thumbnail from "@/assets/thumbnail_home.png";
 import { Icon } from "@iconify/react";
 const Hero = () => {
   return (
-    <section className="relative container mt-[60px] overflow-hidden rounded-xl">
+    <section className="relative container overflow-hidden rounded-xl">
       <img
-        src={thumbnail}
+        src={"/images/thumbnail_home.png"}
         alt="thumb"
         className="h-[732px] w-full"
       />
