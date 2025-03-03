@@ -1,3 +1,6 @@
+import AuthLayout from "@/pages/auth/layout";
+import LoginPage from "@/pages/auth/login/page";
+import RegisterPage from "@/pages/auth/register/page";
 import HomePage from "@/pages/home/page";
 import {
   Routes,
@@ -14,6 +17,19 @@ const AppRouter = () => {
           path="/product"
           element={<HomePage />}
         />
+        <Route
+          path="/auth"
+          element={<AuthLayout />}
+        >
+          <Route
+            path="login"
+            element={<LoginPage />}
+          />
+          <Route
+            path="register"
+            element={<RegisterPage />}
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
