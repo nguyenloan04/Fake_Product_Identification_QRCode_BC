@@ -1,9 +1,9 @@
 import productDataPromise from "@/services/data.service";
-import { ProductCardType } from "@/types/product.type";
+import {ProductCardType, ProductType} from "@/types/product.type";
 
 export const getProductById = async (
   id: string,
-): Promise<ProductCardType> => {
+): Promise<ProductType> => {
   // eslint-disable-next-line no-useless-catch
   try {
     const response = await productDataPromise;

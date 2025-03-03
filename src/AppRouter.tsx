@@ -7,6 +7,7 @@ import {
   Route,
   BrowserRouter,
 } from "react-router";
+import ProductDetail from "@/pages/product-detail/page.tsx";
 
 const AppRouter = () => {
   return (
@@ -14,9 +15,10 @@ const AppRouter = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route
-          path="/product"
-          element={<HomePage />}
-        />
+          path="/product/:id"
+          element={<ProductDetail />}
+          />
+
         <Route
           path="/auth"
           element={<AuthLayout />}
@@ -27,7 +29,7 @@ const AppRouter = () => {
           />
           <Route
             path="register"
-            element={<RegisterPage />}
+            element={<RegisterPage/>}
           />
         </Route>
       </Routes>
