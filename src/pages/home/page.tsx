@@ -1,3 +1,4 @@
+import React from "react";
 import Banner from "@/components/Banner";
 import Feature from "@/components/Feature";
 import Footer from "@/components/Footer";
@@ -6,7 +7,6 @@ import Hero from "@/components/Hero";
 import Navigator from "@/components/Navigator";
 import Product from "@/components/Products";
 import Statistics from "@/components/Statistics";
-import React from "react";
 
 const HomePage = () => {
   return (
