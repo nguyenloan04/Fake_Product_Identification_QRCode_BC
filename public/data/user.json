@@ -1,0 +1,30 @@
+// 1 : admin
+// 2 : producer
+// 0 : user
+{
+  "tandanmin@gmail.com": {
+    "name": "Minh Tấn",
+    "password": "123",
+    "role": 1
+  },
+  "ducvui@gmail.com": {
+    "name": "Anh Đức",
+    "password": "123",
+    "role": 1
+  },
+  "NguyenLoan04@gmail.com": {
+    "name": "Bính Loan",
+    "password": "123",
+    "role": 1
+  },
+  "tandanmin1@gmail.com": {
+    "name": "Minh Tấn",
+    "password": "123",
+    "role": 3
+  },
+  "tandanmin2@gmail.com": {
+    "name": "Fresh Dairy Farms",
+    "password": "123",
+    "role": 2
+  }
+}

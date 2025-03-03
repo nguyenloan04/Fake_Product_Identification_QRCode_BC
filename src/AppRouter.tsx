@@ -8,6 +8,7 @@ import {
   BrowserRouter,
 } from "react-router";
 import ProductDetail from "@/pages/product-detail/page.tsx";
+import Layout from "@/pages/manager/layout.tsx";
 
 const AppRouter = () => {
   return (
@@ -18,7 +19,11 @@ const AppRouter = () => {
           path="/product/:id"
           element={<ProductDetail />}
           />
-
+        <Route
+            path="/admin"
+            element={<Layout/>}
+        >
+        </Route>
         <Route
           path="/auth"
           element={<AuthLayout />}
