@@ -1,6 +1,14 @@
-const { ethers } = require("hardhat");
-const {expect} = require("chai");
-const { utils } = require("ethers");
+// const { ethers } = require("hardhat");
+// const {expect} = require("chai");
+// const { utils } = require("ethers");
+
+import hardhat from 'hardhat'
+import chai from 'chai'
+import util from 'ethers'
+const {ethers} = hardhat
+const {expect} = chai
+const {utils} = util
+
 // const MainSystem = "MainSystem"
 // const SYMBOL = "MS"
 describe("MainSystem", () => {
