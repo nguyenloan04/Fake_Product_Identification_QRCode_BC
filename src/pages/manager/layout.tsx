@@ -1,12 +1,15 @@
 import {SidebarProvider, SidebarTrigger} from "@/components/ui/sidebar.tsx";
 import {AppSidebar} from "@/components/app-sidebar.tsx";
-import {User} from "@/types/user.type.ts";
+import {Outlet} from "react-router";
+import {useAppContext} from "@/AppContext.tsx";
 
-export default function Layout(user:User) {
+export default function LayoutAdmin() {
+    const {user} = useAppContext();
     return <SidebarProvider>
         <AppSidebar  {...user}  />
-        <main>
-            <SidebarTrigger />
+        <main className={"flex-1"}>
+            <SidebarTrigger/>
+            <Outlet/>
         </main>
     </SidebarProvider>
 

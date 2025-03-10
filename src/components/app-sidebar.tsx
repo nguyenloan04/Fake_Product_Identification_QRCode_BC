@@ -9,28 +9,25 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import ClientIcon from "@/components/ClientIcon.tsx";
-import {useState} from "react";
-import {ProductType} from "@/types/product.type.ts";
 import {User} from "@/types/user.type.ts";
 
 // Menu items.
 const items = [
     {
         title: "User",
-        url: "#",
+        url: "/admin/user",
         icon: "qlementine-icons:user-24",
         role: 1
     },
     {
         title: "product",
-        url: "#",
+        url: "/admin/product",
         icon: "carbon:product",
         role: 2
     },
 ]
 
 export function AppSidebar({name, email, role}: User) {
-
     return (
         <Sidebar>
             <SidebarHeader className="p-4 flex flex-col items-center border-b border-gray-300">

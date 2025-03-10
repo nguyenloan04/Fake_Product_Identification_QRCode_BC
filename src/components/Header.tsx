@@ -1,5 +1,5 @@
-import React from "react";
 import { Icon } from "@iconify/react";
+import Link from "@/components/Link.tsx";
 const Header = () => {
   return (
     <header className="container">
@@ -11,9 +11,9 @@ const Header = () => {
         </div>
         <div className="flex items-center gap-4">
           <div>
-            <button className="px-4 py-2 bg-[#2D5F4D] text-white rounded-md hover:bg-green-600">
-              Đăng nhập
-            </button>
+            <Link to={"/auth/login"} className="px-4 py-2 bg-[#2D5F4D] text-white rounded-md hover:bg-green-600">
+                Đăng nhập
+            </Link>
           </div>
           <Icon icon="mdi:cart" width="24" height="24" />
           <Icon color="#2D5F4D" icon="mdi:telephone" width="24" height="24" />

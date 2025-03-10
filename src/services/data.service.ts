@@ -1,4 +1,5 @@
 import { ProductDataLoader } from "@/types/product.type";
+import {UserDataLoader} from "@/types/user.type.ts";
 
 class ProductDataSingleton {
   private static instance: ProductDataSingleton | null =
@@ -69,10 +70,73 @@ class ProductDataSingleton {
   }
 }
 
+
 // Singleton instance for products.json
 const productDataPromise =
   ProductDataSingleton.getInstance().then(
     (instance) => instance.getData(),
   );
 
+
+class UserDataSingleton {
+    private static instance: UserDataSingleton | null =
+        null;
+    private data!: UserDataLoader;
+
+    private constructor() {}
+
+    private async loadData(): Promise<void> {
+        try {
+            const response = await fetch(
+                "/data/users.json",
+            );
+
+            if (!response.ok) {
+                throw new Error();
+            }
+            const json =
+                (await response.json()) as Record<
+                    string,
+                    {
+                        password: string,
+                        name: string,
+                        role: number,
+                    }
+                >;
+
+            this.data = Object.entries(json).reduce(
+                (acc, [key, value]) => {
+                    acc[key] = {
+                        email: key,
+                        password: value.password,
+                        name: value.name,
+                        role: value.role,
+                    };
+                    return acc;
+                },
+                {} as UserDataLoader,
+            );
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
+
+    public static async getInstance(): Promise<UserDataSingleton> {
+        if (!this.instance) {
+            this.instance = new UserDataSingleton();
+            await this.instance.loadData();
+        }
+        return this.instance;
+    }
+
+    public getData() {
+        return this.data;
+    }
+}
+export const userDataPromise =
+    UserDataSingleton.getInstance().then(
+        (instance) => instance.getData(),
+    );
 export default productDataPromise;
+;
