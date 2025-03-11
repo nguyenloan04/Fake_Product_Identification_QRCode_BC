@@ -1,7 +1,6 @@
 import ClientIcon from "@/components/ClientIcon";
-import Link from "@/components/Link";
 
-import React from "react";
+import Link from "@/components/Link";
 import { Outlet } from "react-router";
 
 const AuthLayout = () => {

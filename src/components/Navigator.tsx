@@ -1,5 +1,4 @@
 import Search from "@/components/Search";
-import React from "react";
 
 const Navigator = () => {
   return (

@@ -8,6 +8,9 @@ import {
   BrowserRouter,
 } from "react-router";
 import ProductDetail from "@/pages/product-detail/page.tsx";
+import LayoutAdmin from "@/pages/manager/layout.tsx";
+import ManagerUserPage from "@/pages/manager/user/page.tsx";
+import ManagerProductPage from "@/pages/manager/product/page";
 
 const AppRouter = () => {
   return (
@@ -17,8 +20,24 @@ const AppRouter = () => {
         <Route
           path="/product/:id"
           element={<ProductDetail />}
+        />
+        <Route
+          path="admin"
+          element={<LayoutAdmin />}
+        >
+          <Route
+            index
+            element={<ManagerUserPage />}
           />
-
+          <Route
+            path="user"
+            element={<ManagerUserPage />}
+          />
+          <Route
+            path="product"
+            element={<ManagerProductPage />}
+          />
+        </Route>
         <Route
           path="/auth"
           element={<AuthLayout />}
@@ -29,7 +48,7 @@ const AppRouter = () => {
           />
           <Route
             path="register"
-            element={<RegisterPage/>}
+            element={<RegisterPage />}
           />
         </Route>
       </Routes>

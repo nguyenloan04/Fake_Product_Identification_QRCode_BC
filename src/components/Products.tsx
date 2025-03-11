@@ -1,5 +1,5 @@
 import ProductCard from "@/components/ProductCard";
-import { getProductRandom } from "@/services/product.service";
+import productService from "@/services/product.service";
 import { ProductCardType } from "@/types/product.type";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEffect, useState } from "react";
@@ -13,9 +13,11 @@ const Product = ({
     ProductCardType[]
   >([]);
   useEffect(() => {
-    getProductRandom(4).then((res) => {
-      setProducts(res);
-    });
+    productService
+      .getProductRandom(4)
+      .then((res) => {
+        setProducts(res);
+      });
   }, []);
   return (
     <section className="container">

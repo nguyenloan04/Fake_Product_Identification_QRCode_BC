@@ -1,4 +1,3 @@
-import React from "react";
 import type { ComponentProps } from "react";
 import { Link as LinkDOM } from "react-router-dom";
 
