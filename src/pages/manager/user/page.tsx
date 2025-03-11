@@ -1,28 +1,32 @@
-import {columns} from "./columns"
-import {DataTable} from "./data-table"
-import {useEffect, useState} from "react";
+import { DataTable } from "../../../components/ui/data-table";
+import { useEffect, useState } from "react";
 import userService from "@/services/user.service.ts";
-import {User} from "@/types/user.type.ts";
-
+import { UserType } from "@/types/user.type.ts";
+import { columns } from "@/pages/manager/user/columns";
 
 export default function ManagerUserPage() {
-    const [data, setData] = useState<User[] | []>([])
+  const [data, setData] = useState<
+    UserType[] | []
+  >([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const users = await userService.getAll(); // Ensure this returns User[]
-                setData(users);
-            } catch (error) {
-                console.error("Error fetching users:", error);
-            }
-        };
-        fetchData()
-    }, [])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const users = await userService.getAll(); // Ensure this returns User[]
+        setData(users);
+      } catch (error) {
+        console.error(
+          "Error fetching users:",
+          error,
+        );
+      }
+    };
+    fetchData();
+  }, []);
 
-    return (
-        <div className="container mx-auto py-10">
-            <DataTable columns={columns} data={data} on/>
-        </div>
-    )
+  return (
+    <div className="container mx-auto py-10">
+      <DataTable columns={columns} data={data} />
+    </div>
+  );
 }
