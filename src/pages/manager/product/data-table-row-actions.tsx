@@ -39,7 +39,7 @@ function DataTableRowActions<
     useState<ProductType>();
   useEffect(() => {
     productService
-      .getProductById(row.id)
+      .getProductById(row.original?.id as string)
       .then((product) => setProduct(product))
       .catch(() =>
         toast.error("Khong tim thay san pham"),
