@@ -1,4 +1,3 @@
-
 import hardhat from "hardhat";
 import chai from "chai";
 import util from "ethers";
@@ -61,25 +60,23 @@ describe("MainSystem", async () => {
       const newSaleDate = Math.floor(new Date("2022-11-04").setUTCHours(0, 0, 0, 0) / 1000);
       //
       const productByIndex = await mainSystem.getProduct(id);
-      const oldTitle= productByIndex[1]
-      const oldCategory= productByIndex[2]
-      const oldUnitShippedKg= productByIndex[4]
-      const oldUnitSoldKg=productByIndex[5]
-      const olfUnitOnHandKg= productByIndex[6]
-      const oldFarmLocation = productByIndex[8]
+      const oldTitle = productByIndex[1];
+      const oldCategory = productByIndex[2];
+      const oldUnitShippedKg = productByIndex[4];
+      const oldUnitSoldKg = productByIndex[5];
+      const olfUnitOnHandKg = productByIndex[6];
+      const oldFarmLocation = productByIndex[8];
 
-      // console.log(productByIndex[0]);
-      // console.log(productByIndex.category);
-      // console.log(productByIndex.unitsShippedKg);
-      // console.log(productByIndex.unitsSoldKg);
-      // console.log(productByIndex.unitsOnHandKg);
-      // console.log(productByIndex.farmLocation);
-      const updated= await mainSystem.updateProduct(id,oldTitle,oldCategory,newPricePerKg,oldUnitShippedKg,oldUnitSoldKg,olfUnitOnHandKg,newSupplier,oldFarmLocation,newSaleDate,ownerAddress)
-      console.log(await mainSystem.getProduct(id))
-      const logByIndex= await mainSystem.getLog(1)
-      console.log(typeof logByIndex[2])
-      // const content= await mainSystem.debugLog(1)
-      // console.log(content)
+      const updated = await mainSystem.updateProduct(id, oldTitle, oldCategory, newPricePerKg, oldUnitShippedKg, oldUnitSoldKg, olfUnitOnHandKg, newSupplier, oldFarmLocation, newSaleDate, ownerAddress);
+      console.log(await mainSystem.getProduct(id));
+      const logByIndex = await mainSystem.getLog(1);
+      // console.log(typeof logByIndex[2]);
+      console.log(logByIndex)
+      console.log(Object.getOwnPropertyDescriptors(logByIndex))
+      // console.log(await mainSystem.bytesToString(logByIndex[2]))
+      const contentBytes= logByIndex[2]
+      const trimmedContent = contentBytes.length > 256 ? contentBytes.slice(0, 256) : contentBytes;
+      console.log(await mainSystem.bytesToString(trimmedContent))
     });
 
   });

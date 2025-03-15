@@ -9,9 +9,6 @@ module.exports = {
         enabled: true,
         runs: 200
       },
-      metadata: {
-        useLiteralContent: true
-      },
       viaIR: true  // Kích hoạt viaIR
     }
   }

@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract MainSystem is ERC721 {
-    constructor(string memory _name, string memory _symbol) ERC721(_name,_symbol){
+    constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol){
 
     }
     // Product Object
@@ -28,7 +28,7 @@ contract MainSystem is ERC721 {
     struct Log {
         uint id;
         uint timestamp;
-        string content;
+        bytes content;
         string sender;
         uint productId;
     }
@@ -53,17 +53,17 @@ contract MainSystem is ERC721 {
 
         //
         string memory logContent = string(abi.encodePacked(
-            " Sản phẩm đã tạo có tựa đề: ", _title,
-            ", thuộc danh mục: ", _category,
-            ", giá tiền : ", uint2String(_pricePerKg),
-            "/kg, vận chuyển khoảng: ", uint2String(_unitsShippedKg),
-            ", số kg đã bán: ", uint2String(_unitsSoldKg),
-            ", số lượng tồn kho: ", uint2String(_unitsOnHandKg),
-            ", nhà cung cấp tên: ", _supplier,
-            ", vị trí nông trại: ", _farmLocation,
-            ", ngày bán: ", uint2String(_saleDate)
+            " Product has name: ", _title,
+            ", in category: ", _category,
+            ", price : ", uint2String(_pricePerKg),
+            "/kg, shipped kg: ", uint2String(_unitsShippedKg),
+            ", sold kg: ", uint2String(_unitsSoldKg),
+            ", On hand kg: ", uint2String(_unitsOnHandKg),
+            ", Supplier: ", _supplier,
+            ", Farm Location: ", _farmLocation,
+            ", Sale Date: ", uint2String(_saleDate)
         ));
-        _addLog(logContent, _supplier, productCount);
+        _addLog(bytes(logContent), _supplier, productCount);
         productCount++;
     }
 
@@ -71,33 +71,33 @@ contract MainSystem is ERC721 {
         require(_id < products.length, "Invalid product ID");
         Product storage product = products[_id];
         //
-        string memory logContent = "Sản phẩm có những thay đổi sau: ";
+        string memory logContent = "Product has changes: ";
         if (keccak256(abi.encodePacked(product.title)) != keccak256(abi.encodePacked(_title))) {
-            logContent = string(abi.encodePacked(logContent, "tên sản phẩm đổi từ'", product.title, "' thành '", _title, "', "));
+            logContent = string(abi.encodePacked(logContent, "product name changes from '", product.title, "' to '", _title, "', "));
         }
         if (keccak256(abi.encodePacked(product.category)) != keccak256(abi.encodePacked(_category))) {
-            logContent = string(abi.encodePacked(logContent, "danh mục đổi từ'", product.category, "' thành '", _category, "', "));
+            logContent = string(abi.encodePacked(logContent, "category changes from '", product.category, "' to '", _category, "', "));
         }
         if (keccak256(abi.encodePacked(product.supplier)) != keccak256(abi.encodePacked(_supplier))) {
-            logContent = string(abi.encodePacked(logContent, "nhà cung cấp đổi từ'", product.supplier, "' thành '", _supplier, "', "));
+            logContent = string(abi.encodePacked(logContent, "supplier changes from '", product.supplier, "' to '", _supplier, "', "));
         }
         if (keccak256(abi.encodePacked(product.farmLocation)) != keccak256(abi.encodePacked(_farmLocation))) {
-            logContent = string(abi.encodePacked(logContent, "vị trí nông trại đổi từ'", product.farmLocation, "' thành '", _farmLocation, "', "));
+            logContent = string(abi.encodePacked(logContent, "farm location changes from '", product.farmLocation, "' to '", _farmLocation, "', "));
         }
         if (product.pricePerKg != _pricePerKg) {
-            logContent = string(abi.encodePacked(logContent, "Đơn vị tiền cho 1 kg đổi từ'", product.pricePerKg, "' thành '", _pricePerKg, "', "));
+            logContent = string(abi.encodePacked(logContent, "price per kg changes from '", product.pricePerKg, "' to '", _pricePerKg, "', "));
         }
         if (product.unitsShippedKg != _unitsShippedKg) {
-            logContent = string(abi.encodePacked(logContent, "Số lượng vận chuyển đến đổi từ'", product.unitsShippedKg, "' thành '", _unitsShippedKg, "', "));
+            logContent = string(abi.encodePacked(logContent, "Shipped kg changes from '", product.unitsShippedKg, "' to '", _unitsShippedKg, "', "));
         }
         if (product.unitsSoldKg != _unitsSoldKg) {
-            logContent = string(abi.encodePacked(logContent, "Số lượng bán được đổi từ'", product.unitsSoldKg, "' thành '", _unitsSoldKg, "', "));
+            logContent = string(abi.encodePacked(logContent, "Sold kg changes from '", product.unitsSoldKg, "' to '", _unitsSoldKg, "', "));
         }
         if (product.unitsOnHandKg != _unitsOnHandKg) {
-            logContent = string(abi.encodePacked(logContent, "Số lượng tồn kho đổi từ'", product.unitsOnHandKg, "' thành '", _unitsOnHandKg, "', "));
+            logContent = string(abi.encodePacked(logContent, "On hand kg changes from '", product.unitsOnHandKg, "' to '", _unitsOnHandKg, "', "));
         }
         if (product.saleDate != _saleDate) {
-            logContent = string(abi.encodePacked(logContent, "Ngày bán đổi từ'", product.saleDate, "' thành '", _saleDate, "', "));
+            logContent = string(abi.encodePacked(logContent, "sale date changes from '", product.saleDate, "' to '", _saleDate, "', "));
         }
         // Loại bỏ dấu ',' cuối cùng nếu có
         if (bytes(logContent).length > 0 && bytes(logContent)[bytes(logContent).length - 1] == ',') {
@@ -107,9 +107,13 @@ contract MainSystem is ERC721 {
             }
             logContent = string(trimmedBytes);
         }
+//        if (bytes(logContent).length > 2) {
+//            logContent = string(bytes(logContent)[ bytes(logContent).length - 2]);
+//        }
         if (bytes(logContent).length > 0) {
+//            require(bytes(logContent).length < 256, "String too long");
             emit ProductUpdate(_id, _title, _category, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
-            _addLog(logContent, _supplier, _id);
+            _addLog(bytes(logContent), _supplier, _id);
             product.title = _title;
             product.category = _category;
             product.pricePerKg = _pricePerKg;
@@ -124,7 +128,7 @@ contract MainSystem is ERC721 {
         }
     }
 
-    function _addLog(string memory _content, string memory _sender, uint _productId) public {
+    function _addLog(bytes memory _content, string memory _sender, uint _productId) public {
         uint timestamp = block.timestamp;
         Log memory newLog = Log(logCount + 1, timestamp, _content, _sender, _productId);
         logs.push(newLog);
@@ -137,12 +141,13 @@ contract MainSystem is ERC721 {
         return logCount;
     }
 
-    function getLog(uint _index) public view returns (uint id, uint timestamp, string memory content, string memory sender, uint productId){
+    function getLog(uint _index) public view returns (uint, uint, bytes memory, string memory, uint){
         require(_index < logs.length, "Invalid log index");
         Log memory log = logs[_index];
         return (log.id, log.timestamp, log.content, log.sender, log.productId);
     }
-    function debugLog(uint _index) public view returns (string memory) {
+
+    function debugLog(uint _index) public view returns (bytes memory) {
         require(_index < logs.length, "Invalid log index");
         return logs[_index].content;
     }
@@ -151,7 +156,7 @@ contract MainSystem is ERC721 {
         return productCount;
     }
 
-    function getProduct(uint _id) public view returns (uint, string memory, string memory, uint, uint, uint, uint, string memory,string memory, address, bytes32){
+    function getProduct(uint _id) public view returns (uint, string memory, string memory, uint, uint, uint, uint, string memory, string memory, address, bytes32){
         Product memory product = products[_id];
         bytes32 hash = productHashes[_id];
         return (product.id, product.title, product.category, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.userId, hash);
@@ -173,6 +178,11 @@ contract MainSystem is ERC721 {
     function concatenateStrings(string memory _a, string memory _b) internal pure returns (string memory)  {
         return string.concat(_a, _b);
     }
+    //
+    function bytesToString(bytes memory data) public pure returns (string memory) {
+        return string(data);
+    }
+
 
     function getProductByUserId(address _userId) public view returns (Product[] memory)  {
         uint counter = 0;
@@ -219,69 +229,70 @@ contract MainSystem is ERC721 {
         bool purchased
     );
 
-    function createProductPurchase(uint _productId, uint _price) public  {
+    function createProductPurchase(uint _productId, uint _price) public {
         //
-        require(_price>0);
+        require(_price > 0);
         //
         purchaseCount++;
         //
-        productPurchases[purchaseCount] = ProductPurchase(purchaseCount,_productId,_price,payable(msg.sender),false);
+        productPurchases[purchaseCount] = ProductPurchase(purchaseCount, _productId, _price, payable(msg.sender), false);
         //
-        emit ProductPurchaseCreated(purchaseCount,_productId,_price,payable(msg.sender),false);
+        emit ProductPurchaseCreated(purchaseCount, _productId, _price, payable(msg.sender), false);
     }
 
     function purchaseProduct(uint _id, address _userId, string memory _supplier) public payable {
         // Lấy thông tin của sản phẩm
-        ProductPurchase memory _product= productPurchases[_id];
+        ProductPurchase memory _product = productPurchases[_id];
         // Lấy thông tin của chủ sở hữu
-        address payable _seller= _product.owner;
+        address payable _seller = _product.owner;
         // Kiem tra id co hop le khong
-        require(_product.id>0 && _product.id<= purchaseCount);
+        require(_product.id > 0 && _product.id <= purchaseCount);
         // Kiem tra con du Ether trong giao dich
-        require(msg.value>= _product.price);
+        require(msg.value >= _product.price);
         //nguoi mua khong phai nguoi ban
-        require(_seller!= msg.sender);
+        require(_seller != msg.sender);
 
         // lay thong tin that su cua 1 san pham
-        uint productId= _product.productId;
-        Product storage _realProduct= products[productId];
+        uint productId = _product.productId;
+        Product storage _realProduct = products[productId];
 
         // them lich su thanh toan san pham
-        string memory logContent= string(abi.encodePacked(
-            "Sản phẩm đã chuyển từ đối tác ",_realProduct.supplier," sang: ", _supplier
-    ));
-        _addLog(logContent, _supplier, _id);
+        string memory logContent = string(abi.encodePacked(
+            "Product changes the supplier from ", _realProduct.supplier, " to: ", _supplier
+        ));
+        _addLog(bytes(logContent), _supplier, _id);
         // update userId and supplier trong san pham
-        _realProduct.userId= _userId;
-        _realProduct.supplier= _supplier;
+        _realProduct.userId = _userId;
+        _realProduct.supplier = _supplier;
 
         // Transfer ownership to the buyer
-        _product.owner= payable(msg.sender);
+        _product.owner = payable(msg.sender);
         // danh dau rang product da co so huu
-        _product.purchased= true;
+        _product.purchased = true;
         // update
-        productPurchases[_id]=_product;
+        productPurchases[_id] = _product;
 
         // send Ether
         payable(_seller).transfer(msg.value);
 
         // Trigger an event
-        emit ProductPurchasePurchased(purchaseCount,_product.productId,_product.price,payable(msg.sender),true);
+        emit ProductPurchasePurchased(purchaseCount, _product.productId, _product.price, payable(msg.sender), true);
     }
-    function hasProductWithProductIDAndNotPurchased(uint _productId) public view returns(bool){
-        for(uint i=1; i<=purchaseCount;i++){
-            if(productPurchases[i].productId==_productId && !productPurchases[i].purchased){
+
+    function hasProductWithProductIDAndNotPurchased(uint _productId) public view returns (bool){
+        for (uint i = 1; i <= purchaseCount; i++) {
+            if (productPurchases[i].productId == _productId && !productPurchases[i].purchased) {
                 return true;
             }
         }
         return false;
     }
 
-    function markProductsAsPurchased(uint _productId) public  {
-        for(uint i=1;i<=purchaseCount;i++){
-            if(productPurchases[i].productId==_productId && !productPurchases[i].purchased){
-                productPurchases[i].purchased=true;
-                emit ProductPurchasePurchased(productPurchases[i].id,productPurchases[i].productId,productPurchases[i].price,productPurchases[i].owner,true);
+    function markProductsAsPurchased(uint _productId) public {
+        for (uint i = 1; i <= purchaseCount; i++) {
+            if (productPurchases[i].productId == _productId && !productPurchases[i].purchased) {
+                productPurchases[i].purchased = true;
+                emit ProductPurchasePurchased(productPurchases[i].id, productPurchases[i].productId, productPurchases[i].price, productPurchases[i].owner, true);
             }
         }
 
