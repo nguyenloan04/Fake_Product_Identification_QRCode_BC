@@ -43,12 +43,16 @@ describe("MainSystem", async () => {
       const supplier = "Organic Meet Co.";
       const farmLocation = "O'Reillyboro,OR";
       const saleDate = Math.floor(new Date("2022-07-04").setUTCHours(0, 0, 0, 0) / 1000);
+      console.log(typeof saleDate);
       //
       const result = await mainSystem.createProduct(title, category, pricePerKg, unitsShippedKg, unitsSoldKg,
         unitsOnHandKg, supplier, farmLocation, saleDate, ownerAddress);
+      await mainSystem.createProduct(title, category, pricePerKg, unitsShippedKg, unitsSoldKg,
+        unitsOnHandKg, supplier, farmLocation, saleDate, ownerAddress);
       const productCount = await mainSystem.productCount();
-      expect(productCount).to.be.equal(1);
-      console.log(productCount);
+      expect(productCount).to.be.equal(2);
+      // console.log(productCount);
+
 
       // update
       const id = 0;
@@ -68,15 +72,16 @@ describe("MainSystem", async () => {
       const oldFarmLocation = productByIndex[8];
 
       const updated = await mainSystem.updateProduct(id, oldTitle, oldCategory, newPricePerKg, oldUnitShippedKg, oldUnitSoldKg, olfUnitOnHandKg, newSupplier, oldFarmLocation, newSaleDate, ownerAddress);
-      console.log(await mainSystem.getProduct(id));
+      // console.log(await mainSystem.getProduct(id));
       const logByIndex = await mainSystem.getLog(1);
+
       // console.log(typeof logByIndex[2]);
-      console.log(logByIndex)
-      console.log(Object.getOwnPropertyDescriptors(logByIndex))
-      // console.log(await mainSystem.bytesToString(logByIndex[2]))
-      const contentBytes= logByIndex[2]
-      const trimmedContent = contentBytes.length > 256 ? contentBytes.slice(0, 256) : contentBytes;
-      console.log(await mainSystem.bytesToString(trimmedContent))
+      // console.log(logByIndex)
+      // console.log(ethers.utils.parseBytes32String(logByIndex[2].length))
+      console.log(await mainSystem.debugLog(2));
+      // const trimmedContent = contentBytes.length > 256 ? contentBytes.slice(0, 256) : contentBytes;
+     // console.log(await mainSystem.debugLog(1))
+      // console.log(new Uint8Array(logByIndex[2]))
     });
 
   });

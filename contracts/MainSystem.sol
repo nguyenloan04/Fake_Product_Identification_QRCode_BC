@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.17;
 pragma experimental ABIEncoderV2;
 // help to create NFT
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "hardhat/console.sol";
 
 contract MainSystem is ERC721 {
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol){
@@ -28,7 +29,7 @@ contract MainSystem is ERC721 {
     struct Log {
         uint id;
         uint timestamp;
-        bytes content;
+        string content;
         string sender;
         uint productId;
     }
@@ -63,7 +64,7 @@ contract MainSystem is ERC721 {
             ", Farm Location: ", _farmLocation,
             ", Sale Date: ", uint2String(_saleDate)
         ));
-        _addLog(bytes(logContent), _supplier, productCount);
+        _addLog(logContent, _supplier, productCount);
         productCount++;
     }
 
@@ -85,7 +86,7 @@ contract MainSystem is ERC721 {
             logContent = string(abi.encodePacked(logContent, "farm location changes from '", product.farmLocation, "' to '", _farmLocation, "', "));
         }
         if (product.pricePerKg != _pricePerKg) {
-            logContent = string(abi.encodePacked(logContent, "price per kg changes from '", product.pricePerKg, "' to '", _pricePerKg, "', "));
+            logContent = string(abi.encodePacked(logContent, "price per kg changes from '", uint2String(product.pricePerKg), "' to '", uint2String(_pricePerKg), "', "));
         }
         if (product.unitsShippedKg != _unitsShippedKg) {
             logContent = string(abi.encodePacked(logContent, "Shipped kg changes from '", product.unitsShippedKg, "' to '", _unitsShippedKg, "', "));
@@ -97,9 +98,9 @@ contract MainSystem is ERC721 {
             logContent = string(abi.encodePacked(logContent, "On hand kg changes from '", product.unitsOnHandKg, "' to '", _unitsOnHandKg, "', "));
         }
         if (product.saleDate != _saleDate) {
-            logContent = string(abi.encodePacked(logContent, "sale date changes from '", product.saleDate, "' to '", _saleDate, "', "));
+            logContent = string(abi.encodePacked(logContent, "sale date changes from '", uint2String(product.saleDate), "' to '",  uint2String(_saleDate),"'"));
         }
-        // Loại bỏ dấu ',' cuối cùng nếu có
+//        // Loại bỏ dấu ',' cuối cùng nếu có
         if (bytes(logContent).length > 0 && bytes(logContent)[bytes(logContent).length - 1] == ',') {
             bytes memory trimmedBytes = new bytes(bytes(logContent).length - 2);
             for (uint i = 0; i < bytes(logContent).length - 2; i++) {
@@ -107,13 +108,9 @@ contract MainSystem is ERC721 {
             }
             logContent = string(trimmedBytes);
         }
-//        if (bytes(logContent).length > 2) {
-//            logContent = string(bytes(logContent)[ bytes(logContent).length - 2]);
-//        }
         if (bytes(logContent).length > 0) {
-//            require(bytes(logContent).length < 256, "String too long");
             emit ProductUpdate(_id, _title, _category, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
-            _addLog(bytes(logContent), _supplier, _id);
+            _addLog(logContent, _supplier, _id);
             product.title = _title;
             product.category = _category;
             product.pricePerKg = _pricePerKg;
@@ -128,11 +125,11 @@ contract MainSystem is ERC721 {
         }
     }
 
-    function _addLog(bytes memory _content, string memory _sender, uint _productId) public {
+    function _addLog(string memory _content, string memory _sender, uint _productId) public {
         uint timestamp = block.timestamp;
-        Log memory newLog = Log(logCount + 1, timestamp, _content, _sender, _productId);
+        Log memory newLog = Log(logCount, timestamp, _content, _sender, _productId);
         logs.push(newLog);
-        emit LogInserted(logCount + 1, timestamp, _sender, _productId);
+        emit LogInserted(logCount , timestamp, _sender, _productId);
         logCount++;
 
     }
@@ -141,15 +138,16 @@ contract MainSystem is ERC721 {
         return logCount;
     }
 
-    function getLog(uint _index) public view returns (uint, uint, bytes memory, string memory, uint){
+    function getLog(uint _index) public view returns (uint id, uint timestamp, string memory content, string memory sender, uint productId){
         require(_index < logs.length, "Invalid log index");
         Log memory log = logs[_index];
         return (log.id, log.timestamp, log.content, log.sender, log.productId);
     }
 
-    function debugLog(uint _index) public view returns (bytes memory) {
+    function debugLog(uint _index) public view returns (string memory) {
         require(_index < logs.length, "Invalid log index");
-        return logs[_index].content;
+        Log memory log= logs[_index];
+        return string(abi.encodePacked(log.content));
     }
 
     function getProductCount() public view returns (uint){
@@ -260,7 +258,7 @@ contract MainSystem is ERC721 {
         string memory logContent = string(abi.encodePacked(
             "Product changes the supplier from ", _realProduct.supplier, " to: ", _supplier
         ));
-        _addLog(bytes(logContent), _supplier, _id);
+        _addLog(logContent, _supplier, _id);
         // update userId and supplier trong san pham
         _realProduct.userId = _userId;
         _realProduct.supplier = _supplier;
