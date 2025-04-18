@@ -1,6 +1,6 @@
 import {useState} from "react";
 import {Icon} from "@iconify/react";
-import {ProductType} from "@/types/product.type.ts";
+import {ProductType} from "@/types/product.type";
 
 const ProductCardDetail = ({ name, image,category,farmLocation,price,supplier}: ProductType) => {
     const [quantity, setQuantity] = useState(1);

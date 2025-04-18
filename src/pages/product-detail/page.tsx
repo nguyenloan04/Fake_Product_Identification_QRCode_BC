@@ -1,11 +1,11 @@
-import ProductCardDetail from "@/components/ProductCardDetail.tsx";
-import Header from "@/components/Header.tsx";
+import ProductCardDetail from "@/components/ProductCardDetail";
+import Header from "@/components/Header";
 import React, {useEffect, useState} from "react";
-import Footer from "@/components/Footer.tsx";
-import Product from "@/components/Products.tsx";
+import Footer from "@/components/Footer";
+import Product from "@/components/Products";
 import {useLocation, useParams} from "react-router";
-import {getProductById} from "@/services/product.service.ts";
-import {ProductType} from "@/types/product.type.ts";
+import {getProductById} from "@/services/product.service";
+import {ProductType} from "@/types/product.type";
 
 const ProductDetail = () => {
     const {id} = useParams();
