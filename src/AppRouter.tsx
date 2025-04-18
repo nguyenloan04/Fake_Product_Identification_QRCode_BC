@@ -7,7 +7,7 @@ import {
   Route,
   BrowserRouter,
 } from "react-router";
-import ProductDetail from "@/pages/product-detail/page.tsx";
+import ProductDetail from "@/pages/product-detail/page";
 
 const AppRouter = () => {
   return (

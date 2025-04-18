@@ -1,5 +1,7 @@
 import productDataPromise from "@/services/data.service";
 import {ProductCardType, ProductType} from "@/types/product.type";
+import { ethers } from 'ethers';
+import ProductManagerABI from '@/abis/ProductManager.json';
 
 export const getProductById = async (
   id: string,
