@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Icon} from "@iconify/react";
 import {ProductType} from "@/types/product.type";
 
-const ProductCardDetail = ({ name, image,category,farmLocation,price,supplier}: ProductType) => {
+const ProductCardDetail = ({ title, image,category,farmLocation,price,supplier}: ProductType) => {
     const [quantity, setQuantity] = useState(1);
 
     const handleIncrease = () => {
@@ -18,7 +18,7 @@ const ProductCardDetail = ({ name, image,category,farmLocation,price,supplier}: 
             <div className="container flex">
             <div className="flex-none my-5 relative overflow-hidden rounded-2xl max-h-[500px] w-1/2">
                 <img
-                    src={'/images/products/' + image}
+                    src={image}
                     alt="Pomegranate"
                     className="object-cover w-full h-full "
                 />
@@ -29,7 +29,7 @@ const ProductCardDetail = ({ name, image,category,farmLocation,price,supplier}: 
                 </button>
             </div>
             <div className="flex flex-col justify-between px-10  w-1/2 my-24">
-                <h2 className="text-2xl font-semibold">{name}</h2>
+                <h2 className="text-2xl font-semibold">{title}</h2>
                 <h3 className="text-xl font-semibold">Category:&nbsp; {category}</h3>
                 <div className="flex justify-start text-gray-600 ">
                     <p className="mr-5">Supplier: <span className="font-semibold text-black">{supplier}</span>

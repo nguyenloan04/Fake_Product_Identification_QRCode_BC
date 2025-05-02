@@ -41,9 +41,7 @@ const Product = ({
               title={item.title}
               category={item.category}
               price={item.price}
-              image={
-                "/images/products/" + item.image
-              }
+              image={item.image}
             />
           ))}
       </div>

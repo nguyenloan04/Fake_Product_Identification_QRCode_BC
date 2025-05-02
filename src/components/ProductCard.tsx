@@ -1,6 +1,6 @@
 import React from "react";
 import {Icon} from "@iconify/react/dist/iconify.js";
-// import {Link, useNavigate} from "react-router";
+import {Link, useNavigate} from "react-router";
 
 type ProductCardProps = {
     id: number;
@@ -17,7 +17,7 @@ const ProductCard = ({
                          image,
                          price,
                      }: ProductCardProps) => {
-        // const navigate = useNavigate();
+        const navigate = useNavigate();
 
         const handleNavigate = () => {
             // Smoothly scroll to top

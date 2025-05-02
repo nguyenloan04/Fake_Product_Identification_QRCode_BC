@@ -15,5 +15,5 @@ export const normalizeName = (title: string,category: string) => {
 
 export const getProductImage = (title: string, category: string) => {
   const fileName = normalizeName(title,category);
-  return `${fileName}.jpg`;
+  return `/images/products/${fileName}.jpg`;
 };
