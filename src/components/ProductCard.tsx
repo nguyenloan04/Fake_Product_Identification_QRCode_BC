@@ -1,21 +1,23 @@
 import React from "react";
 import {Icon} from "@iconify/react/dist/iconify.js";
-import {Link, useNavigate} from "react-router";
+// import {Link, useNavigate} from "react-router";
 
 type ProductCardProps = {
-    id: string;
-    name: string;
+    id: number;
+    title: string;
+    category: string;
     price: number;
     image: string;
 };
 
 const ProductCard = ({
                          id,
-                         name,
+                         title,
+                       category,
                          image,
                          price,
                      }: ProductCardProps) => {
-        const navigate = useNavigate();
+        // const navigate = useNavigate();
 
         const handleNavigate = () => {
             // Smoothly scroll to top
@@ -37,9 +39,12 @@ const ProductCard = ({
                     className="h-96 w-auto object-contain"
                 />
                 <div className="relative m-4 text-lg">
-                    <h5 className="text-gray-600 hover:text-[#2C742F]">
-                        {name}
-                    </h5>
+                  <h5 className="text-gray-600 hover:text-[#2C742F]">
+                    {title}
+                  </h5>
+                  <h5 className="text-gray-600 hover:text-[#2C742F]">
+                    {category}
+                  </h5>
                     <strong className="font-medium">
                         {price}
                     </strong>

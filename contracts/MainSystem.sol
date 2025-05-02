@@ -144,16 +144,19 @@ contract MainSystem is ERC721 {
         return (log.id, log.timestamp, log.content, log.sender, log.productId);
     }
 
-    function debugLog(uint _index) public view returns (string memory) {
-        require(_index < logs.length, "Invalid log index");
-        Log memory log= logs[_index];
-        return string(abi.encodePacked(log.content));
-    }
+//    function debugLog(uint _index) public view returns (string memory) {
+//        require(_index < logs.length, "Invalid log index");
+//        Log memory log= logs[_index];
+//        return string(abi.encodePacked(log.content));
+//    }
 
     function getProductCount() public view returns (uint){
         return productCount;
     }
 
+//    function getAllProducts() public view returns (Product[] memory) {
+//        return products;
+//    }
     function getProduct(uint _id) public view returns (uint, string memory, string memory, uint, uint, uint, uint, string memory, string memory, address, bytes32){
         Product memory product = products[_id];
         bytes32 hash = productHashes[_id];

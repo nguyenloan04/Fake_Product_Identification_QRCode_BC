@@ -1,13 +1,14 @@
 export type ProductCardType = {
-  id: string;
-  name: string;
+  id: number;
+  title: string;
+  category: string;
   image: string;
   price: number;
 };
 
 export type ProductType = ProductCardType & {
-  category: string;
   unitShipped: number;
+  unitSold: number;
   unitOnHand: number;
   supplier: string;
   farmLocation: string;
@@ -15,6 +16,6 @@ export type ProductType = ProductCardType & {
 };
 
 export type ProductDataLoader = Record<
-  string,
+  number,
   ProductType
 >;

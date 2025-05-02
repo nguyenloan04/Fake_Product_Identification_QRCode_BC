@@ -1,5 +1,5 @@
 import ProductCard from "@/components/ProductCard";
-import { getProductRandom } from "@/services/product.service";
+import { getAllProducts } from "@/services/product.service";
 import { ProductCardType } from "@/types/product.type";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useEffect, useState } from "react";
@@ -13,7 +13,7 @@ const Product = ({
     ProductCardType[]
   >([]);
   useEffect(() => {
-    getProductRandom(4).then((res) => {
+    getAllProducts().then((res) => {
       setProducts(res);
     });
   }, []);
@@ -38,7 +38,8 @@ const Product = ({
             <ProductCard
               id={item.id}
               key={item.id}
-              name={item.name}
+              title={item.title}
+              category={item.category}
               price={item.price}
               image={
                 "/images/products/" + item.image
