@@ -32,16 +32,17 @@ export const getProductById = async (
     }
     return {
       id: product[0],
-      title: product[1].toString(),
-      category: product[2].toString(),
-      image: getProductImage(product[1].toString(), product[2].toString()),
-      price: product[3].toNumber(),
-      unitShipped: product[4],
-      unitSold: product[5],
-      unitOnHand: product[6],
-      supplier: product[7].toString(),
-      farmLocation: product[8].toString(),
-      saleDate: product[9],
+      productCode: product[1].toString(),
+      title: product[2].toString(),
+      category: product[3].toString(),
+      image: getProductImage(product[2].toString(), product[3].toString()),
+      price: product[4].toNumber(),
+      unitShipped: product[5],
+      unitSold: product[6],
+      unitOnHand: product[7],
+      supplier: product[8].toString(),
+      farmLocation: product[9].toString(),
+      saleDate: product[10],
     };
   } catch (e) {
     throw e;
@@ -96,8 +97,8 @@ export const getAllProducts = async (): Promise<ProductCardType[]> => {
 
   for (let i = 0; i < count; i++) {
     const product= await contract.getProduct(i);
-    const productImage = getProductImage(product[1].toString(),product[2].toString());
-    products.push({  id: i, title: product[1].toString() ,category: product[2].toString() , image: productImage,price: product[3].toNumber()});
+    const productImage = getProductImage(product[2].toString(),product[3].toString());
+    products.push({  id: i, title: product[2].toString() ,category: product[3].toString() , image: productImage,price: product[4].toNumber()});
   }
   console.log(products)
   return products;

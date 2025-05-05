@@ -7,6 +7,7 @@ export type ProductCardType = {
 };
 
 export type ProductType = ProductCardType & {
+  productCode: string;
   unitShipped: number;
   unitSold: number;
   unitOnHand: number;

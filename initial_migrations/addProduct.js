@@ -12,6 +12,7 @@ async function main() {
 
   // Thêm sản phẩm mẫu
   const ownerAddress = deployer.address;
+  const productCode= "b12c721e-8301-4b08-8ac3-d435be9b8b32"
   const title = "Lamb";
   const category = "Livestock";
   const pricePerKg = 14;
@@ -21,7 +22,7 @@ async function main() {
   const supplier = "Organic Meet Co.";
   const farmLocation = "O'Reillyboro,OR";
   const saleDate = Math.floor(new Date("2022-07-04").setUTCHours(0, 0, 0, 0) / 1000);
-  const result = await productContract.createProduct(title, category, pricePerKg, unitsShippedKg, unitsSoldKg,
+  const result = await productContract.createProduct(productCode, title, category, pricePerKg, unitsShippedKg, unitsSoldKg,
     unitsOnHandKg, supplier, farmLocation, saleDate, ownerAddress);
 
   // await productContract.wait();
