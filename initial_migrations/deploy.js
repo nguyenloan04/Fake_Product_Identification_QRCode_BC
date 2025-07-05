@@ -13,7 +13,7 @@ let deployer, buyer;
 const MainSystem = await ethers.getContractFactory("MainSystem");
 mainSystem = await MainSystem.deploy("MainSystem", "MS");
 await mainSystem.deployed();
-console.log("✅ Contract deployed at:", await mainSystem.address);
+console.log("Contract deployed at:", await mainSystem.address);
 // Danh sách các tài khoản
 const accounts = await ethers.provider.listAccounts();
 for (const account of accounts) {
