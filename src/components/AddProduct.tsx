@@ -1,76 +1,111 @@
 "use client";
-// sửa sau
+
 import React, { useState } from "react";
-import { ethers } from "ethers";
-import ProductABI from "@/abis/MainSystem.json";
+import { useForm } from "react-hook-form";
+import { createProduct, getProductCount } from "@/services/product.service";
+import { uploadToCloudinary } from "@/services/cloudinary.service";
+import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
 
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; 
+type AddProductFormData = {
+  title: string;
+  category: string;
+  productCode: string;
+  price: number;
+  unitShipped: number;
+  unitSold: number;
+  unitOnHand: number;
+  supplier: string;
+  farmLocation: string;
+  saleDate: string; // yyyy-mm-dd
+};
 
-export const AddProduct: React.FC = () => {
-  const [name, setName] = useState("");
-  const [origin, setOrigin] = useState("");
-  const [loading, setLoading] = useState(false);
+const AddProductForm = () => {
+  const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
 
-  const handleAddProduct = async () => {
-    if (!window.ethereum) {
-      alert("Vui lòng cài MetaMask!");
-      return;
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<AddProductFormData>({
+    defaultValues: {
+      title: "",
+      category: "",
+      productCode: "",
+      price: 0,
+      unitShipped: 0,
+      unitSold: 0,
+      unitOnHand: 0,
+      supplier: "",
+      farmLocation: "",
+      saleDate: ""
     }
+  });
 
+  const onSubmit = async (data: AddProductFormData) => {
     try {
-      setLoading(true);
+      if (!file || !data.title) {
+        toast.error("Vui lòng chọn ảnh và nhập tên sản phẩm");
+        return;
+      }
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(contractAddress, ProductABI.abi, signer);
+      const count = await getProductCount(); // dùng làm productId
+      const imageUrl = await uploadToCloudinary(file, data.title, count);
+      const saleDate = new Date(data.saleDate); // yyyy-mm-dd
 
-      const tx = await contract.addProduct(name, origin);
-      await tx.wait(); // đợi transaction confirm
+      await createProduct({
+        title: data.title,
+        category: data.category,
+        image: imageUrl,
+        productCode: data.productCode,
+        price: data.price,
+        unitShipped: data.unitShipped,
+        unitSold: data.unitSold,
+        unitOnHand: data.unitOnHand,
+        supplier: data.supplier,
+        farmLocation: data.farmLocation,
+        saleDate
+      });
 
-      alert("Thêm sản phẩm thành công!");
-
-      // Reset form
-      setName("");
-      setOrigin("");
+      toast.success("Thêm sản phẩm thành công!");
+      reset(); // reset form
+      setFile(null); // reset file
+      navigate("/admin/dashboard");
     } catch (error) {
-      console.error(error);
-      alert("Có lỗi xảy ra khi thêm sản phẩm!");
-    } finally {
-      setLoading(false);
+      console.error("Add Product Error:", error);
+      toast.error("Thêm sản phẩm thất bại!");
     }
   };
 
   return (
-    <div className="p-4 rounded-lg shadow-md bg-white">
-      <h2 className="text-xl font-bold mb-4">Thêm sản phẩm mới</h2>
-
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Tên sản phẩm"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
+    <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4 p-4 bg-white rounded shadow">
+      <Input {...register("title")} placeholder="Tên sản phẩm" required />
+      <Input {...register("category")} placeholder="Danh mục" required />
+      <Input {...register("productCode")} placeholder="Mã sản phẩm (hash)" required />
+      <Input type="number" {...register("price", { valueAsNumber: true })} placeholder="Giá / kg" required />
+      <Input type="number" {...register("unitShipped", { valueAsNumber: true })} placeholder="Số kg đã giao" required />
+      <Input type="number" {...register("unitSold", { valueAsNumber: true })} placeholder="Số kg đã bán" required />
+      <Input type="number" {...register("unitOnHand", { valueAsNumber: true })} placeholder="Tồn kho (kg)" required />
+      <Input {...register("supplier")} placeholder="Nhà cung cấp" required />
+      <Input {...register("farmLocation")} placeholder="Nơi trồng" required />
+      <Input type="date" {...register("saleDate")} required />
+      <Input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setFile(e.target.files?.[0] || null)}
+        className="col-span-2"
+      />
+      <div className="col-span-2">
+        <Button type="submit" className="w-full bg-green-700 hover:bg-green-600 text-white">
+          Thêm sản phẩm
+        </Button>
       </div>
-
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Xuất xứ"
-          value={origin}
-          onChange={(e) => setOrigin(e.target.value)}
-          className="border p-2 w-full rounded"
-        />
-      </div>
-
-      <button
-        onClick={handleAddProduct}
-        disabled={loading}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
-      >
-        {loading ? "Đang thêm..." : "Thêm sản phẩm"}
-      </button>
-    </div>
+    </form>
   );
 };
+
+export default AddProductForm;

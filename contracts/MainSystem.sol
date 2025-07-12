@@ -16,6 +16,7 @@ contract MainSystem is ERC721 {
         string productCode; //hash
         string title;
         string category;
+        string imageUrl;
         uint pricePerKg;
         uint unitsShippedKg;
         uint unitsSoldKg;
@@ -43,27 +44,22 @@ contract MainSystem is ERC721 {
     uint public logCount;
 
 
-    event ProductCreated(uint indexed id,string productCode, string title, string category, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
+    event ProductCreated(uint indexed id,string productCode, string title, string category,string imageUrl, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
     event ProductUpdate(uint indexed id,string productCode, string title, string category, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
     event LogInserted(uint id, uint timestamp, string sender, uint productId);
 
-    function createProduct(string memory _productCode, string memory _title ,string memory _category, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
-        products.push(Product(productCount,_productCode, _title, _category, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId));
-        bytes32 hash = _calculateHash(_productCode, _supplier, _farmLocation);
+    function createProduct(string memory _productCode, string memory _title ,string memory _category,string memory _imageUrl, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
+        products.push(Product(productCount,_productCode, _title, _category,_imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId));
+        bytes32 hash = _calculateHash(_productCode, _supplier);
         productHashes[productCount] = hash;
-        emit ProductCreated(productCount,_productCode, _title, _category, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
+        emit ProductCreated(productCount,_productCode, _title, _category,_imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
 
         //
         string memory logContent = string(abi.encodePacked(
             " Product has name: ", _title,
-            ", in category: ", _category,
             ", price : ", uint2String(_pricePerKg),
-            "/kg, shipped kg: ", uint2String(_unitsShippedKg),
-            ", sold kg: ", uint2String(_unitsSoldKg),
-            ", On hand kg: ", uint2String(_unitsOnHandKg),
             ", Supplier: ", _supplier,
-            ", Farm Location: ", _farmLocation,
-            ", Sale Date: ", uint2String(_saleDate)
+            ", Farm Location: ", _farmLocation
         ));
         _addLog(logContent, _supplier, productCount);
         productCount++;
@@ -125,7 +121,7 @@ contract MainSystem is ERC721 {
             product.supplier = _supplier;
             product.farmLocation = _farmLocation;
             product.saleDate = _saleDate;
-            bytes32 hash = _calculateHash(_productCode, _supplier, _farmLocation);
+            bytes32 hash = _calculateHash(_productCode, _supplier);
             productHashes[_id] = hash;
         }
     }
@@ -162,18 +158,18 @@ contract MainSystem is ERC721 {
 //    function getAllProducts() public view returns (Product[] memory) {
 //        return products;
 //    }
-    function getProduct(uint _id) public view returns (uint,string memory, string memory, string memory, uint, uint, uint, uint, string memory, string memory, address, bytes32){
+    function getProduct(uint _id) public view returns (uint,string memory, string memory, string memory,string memory, uint, uint, uint, uint, string memory, string memory, address, bytes32){
         Product memory product = products[_id];
         bytes32 hash = productHashes[_id];
-        return (product.id, product.productCode, product.title, product.category, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.userId, hash);
+        return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.userId, hash);
     }
 
-    function _calculateHash(string memory _productCode, string memory _supplier, string memory _farmLocation) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_productCode, _supplier, _farmLocation));
+    function _calculateHash(string memory _productCode, string memory _supplier) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_productCode, _supplier));
     }
 
     function getProductHash(uint _id) public view returns (bytes32)  {
-        require(_id < products.length, "Invalid work ID");
+        require(_id < products.length, "Invalid product ID");
         return productHashes[_id];
     }
     // convert uint to string
