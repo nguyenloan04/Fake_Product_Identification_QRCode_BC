@@ -14,21 +14,42 @@ import {
   LoginBodyReqType,
 } from "@/types/schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import { ExternalProvider } from "@ethersproject/providers";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "@/services/user.service";
 
 const LoginForm = () => {
-  // 1. Define your form.
   const form = useForm<LoginBodyReqType>({
     resolver: zodResolver(LoginBodyReq),
   });
 
-  // 2. Define a submit handler.
-  async function onSubmit(
-    values: LoginBodyReqType,
-  ) {
-    console.log(values);
+  const navigate = useNavigate();
+
+  async function onSubmit(values: LoginBodyReqType) {
+    try {
+      if (!window.ethereum) {
+        alert("Vui lòng cài MetaMask");
+        return;
+      }
+
+      const ethereum = window.ethereum as ExternalProvider;
+      await ethereum.request?.({ method: "eth_requestAccounts" });
+
+      const result = await loginUser(values.username, values.password);
+      if (!result.success) {
+        alert("Sai thông tin đăng nhập hoặc ví không đúng");
+        return;
+      }
+
+      if (result.role === 1) navigate("/admin/dashboard");
+      else navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Đăng nhập thất bại");
+    }
   }
+
   return (
     <Form {...form}>
       <form
@@ -37,13 +58,13 @@ const LoginForm = () => {
       >
         <FormField
           control={form.control}
-          name="email"
+          name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Tên đăng nhập</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Vui lòng không để trống"
+                  placeholder="Nhập tên đăng nhập"
                   {...field}
                 />
               </FormControl>
@@ -51,6 +72,7 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="password"
@@ -59,17 +81,18 @@ const LoginForm = () => {
               <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Vui lòng không để trống"
+                  type="password"
+                  placeholder="Nhập mật khẩu"
                   {...field}
                 />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
+
         <Button className="w-full" type="submit">
-          Đăng nhập
+          Đăng nhập với ví MetaMask
         </Button>
       </form>
     </Form>

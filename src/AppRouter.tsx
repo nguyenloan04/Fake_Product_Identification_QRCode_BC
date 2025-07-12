@@ -5,7 +5,7 @@ import HomePage from "@/pages/home/page";
 import {
   Routes,
   Route,
-  BrowserRouter,
+  BrowserRouter
 } from "react-router";
 import ProductDetail from "@/pages/product-detail/page";
 
@@ -17,7 +17,7 @@ const AppRouter = () => {
         <Route
           path="/product/:id"
           element={<ProductDetail />}
-          />
+        />
 
         <Route
           path="/auth"
@@ -29,7 +29,7 @@ const AppRouter = () => {
           />
           <Route
             path="register"
-            element={<RegisterPage/>}
+            element={<RegisterPage />}
           />
         </Route>
       </Routes>

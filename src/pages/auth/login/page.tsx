@@ -33,21 +33,21 @@ const LoginPage = () => {
       <div className="rounded-md border border-gray-300 p-2">
         <LoginForm />
       </div>
-      <div className="rounded-md border border-gray-300 p-2">
-        <span className="block py-2 text-center">
-          Hoặc đăng nhập với
-        </span>
-        <div className="flex justify-evenly">
-          <ClientIcon
-            icon="flat-color-icons:google"
-            size={40}
-          />
-          <ClientIcon
-            icon="logos:facebook"
-            size={40}
-          />
-        </div>
-      </div>
+      {/*<div className="rounded-md border border-gray-300 p-2">*/}
+        {/*<span className="block py-2 text-center">*/}
+        {/*  Hoặc đăng nhập với*/}
+        {/*</span>*/}
+        {/*<div className="flex justify-evenly">*/}
+        {/*  <ClientIcon*/}
+        {/*    icon="flat-color-icons:google"*/}
+        {/*    size={40}*/}
+        {/*  />*/}
+        {/*  <ClientIcon*/}
+        {/*    icon="logos:facebook"*/}
+        {/*    size={40}*/}
+        {/*  />*/}
+        {/*</div>*/}
+      {/*</div>*/}
     </article>
   );
 };

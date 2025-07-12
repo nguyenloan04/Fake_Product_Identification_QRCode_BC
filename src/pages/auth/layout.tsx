@@ -9,7 +9,7 @@ const AuthLayout = () => {
     <main className="relative h-screen w-screen bg-gray-100">
       <div className="absolute inset-0 z-10 bg-white/20 backdrop-blur-sm" />
       <div className="absolute inset-0 -z-0">
-        <img className="w-full" src="/images/bg_auth.jpeg" alt="" />
+        <img className="w-full h-full" src="/images/bg_auth.jpeg" alt="" />
       </div>
       <Link
         to="/"

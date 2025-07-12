@@ -1,7 +1,7 @@
 // import productDataPromise from "@/services/data.service";
 import { ProductCardType, ProductType } from "@/types/product.type";
 import { ethers } from "ethers";
-import ProductManagerABI from "../../artifacts/contracts/MainSystem.sol/MainSystem.json";
+import ProductManagerABI from "@/abis/MainSystem.json";
 import { getProductImage } from "@/utils/imageHelper";
 
 const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -24,7 +24,7 @@ export const getProductById = async (
     }
 
     const signer = provider.getSigner();
-    const contract = new ethers.Contract(contractAddress, ProductManagerABI.abi, signer);
+    const contract = new ethers.Contract(contractAddress, ProductManagerABI, signer);
     const product = await contract.getProduct(id);
     console.log(product)
     if (!product) {
