@@ -21,7 +21,7 @@ const Header = () => {
 
   const handleLogout = () => {
     sessionStorage.removeItem("userInfo");
-    window.location.reload();
+    window.location.href = "/";
   };
 
   return (

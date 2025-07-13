@@ -29,16 +29,17 @@ export const getProductById = async (
     if (!product) {
       throw new Error("404");
     }
+    console.log("product[11]", product[11]);
     return {
-      id: product[0],
+      id: product[0].toNumber(),
       productCode: product[1].toString(),
       title: product[2].toString(),
       category: product[3].toString(),
       image: product[4].toString(),
       price: product[5].toNumber(),
-      unitShipped: product[6],
-      unitSold: product[7],
-      unitOnHand: product[8],
+      unitShipped: product[6].toNumber(),
+      unitSold: product[7].toNumber(),
+      unitOnHand: product[8].toNumber(),
       supplier: product[9].toString(),
       farmLocation: product[10].toString(),
       saleDate: new Date(product[11].toNumber() * 1000),
@@ -124,6 +125,7 @@ export const getProductCount = async (): Promise<number> => {
 };
 
 export const getLogsByProductId = async (productId: number) => {
+  if (!window.ethereum) throw new Error("MetaMask not found");
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const signer = provider.getSigner();
   const contract = new ethers.Contract(CONTRACT_ADDRESS, ProductManagerABI, signer);
