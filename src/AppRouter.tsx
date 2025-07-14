@@ -11,6 +11,7 @@ import ProductDetail from "@/pages/product-detail/page";
 import AdminLayout from "@/pages/admin/layout";
 import AdminPage from "@/pages/admin/dashboard/page";
 import AddProductPage from "@/pages/admin/products/page";
+import EditProductPage from "@/pages/admin/products/edit/page";
 
 const AppRouter = () => {
   return (
@@ -38,6 +39,8 @@ const AppRouter = () => {
         <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<AdminPage />} />
           <Route path="add-product" element={<AddProductPage />} />
+          <Route path="product/edit/:id" element={<EditProductPage />} />
+
         </Route>
       </Routes>
     </BrowserRouter>

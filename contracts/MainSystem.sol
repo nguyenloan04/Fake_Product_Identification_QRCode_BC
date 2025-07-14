@@ -6,7 +6,18 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "hardhat/console.sol";
 
+interface IUser {
+    function getUserByUsername(string memory _username) external view returns (
+        uint, string memory, string memory, string memory, string memory, uint, string memory, string memory, address
+    );
+
+    function getUsernamesByAddress(address) external view returns (string memory);
+
+    function getWalletByUsername(string memory) external view returns (address);
+}
+
 contract MainSystem is ERC721 {
+    IUser public userContract;
     constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol){
 
     }
@@ -44,15 +55,19 @@ contract MainSystem is ERC721 {
     uint public logCount;
 
 
-    event ProductCreated(uint indexed id,string productCode, string title, string category,string imageUrl, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
-    event ProductUpdate(uint indexed id,string productCode, string title, string category, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
+    event ProductCreated(uint indexed id, string productCode, string title, string category, string imageUrl, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
+    event ProductUpdate(uint indexed id, string productCode, string title, string category, uint pricePerKg, uint unitsShippedKg, uint unitsSoldKg, uint unitsOnHandKg, string supplier, string farmLocation, uint saleDate, address userId);
     event LogInserted(uint id, uint timestamp, string sender, uint productId);
 
-    function createProduct(string memory _productCode, string memory _title ,string memory _category,string memory _imageUrl, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
-        products.push(Product(productCount,_productCode, _title, _category,_imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId));
+    function setUserContractAddress(address _addr) public {
+        userContract = IUser(_addr);
+    }
+
+    function createProduct(string memory _productCode, string memory _title, string memory _category, string memory _imageUrl, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
+        products.push(Product(productCount, _productCode, _title, _category, _imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId));
         bytes32 hash = _calculateHash(_productCode, _supplier);
         productHashes[productCount] = hash;
-        emit ProductCreated(productCount,_productCode, _title, _category,_imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
+        emit ProductCreated(productCount, _productCode, _title, _category, _imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
 
         //
         string memory logContent = string(abi.encodePacked(
@@ -67,6 +82,7 @@ contract MainSystem is ERC721 {
 
     function updateProduct(uint _id, string memory _productCode, string memory _title, string memory _category, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
         require(_id < products.length, "Invalid product ID");
+        require(address(userContract) != address(0), "User contract not set");
         Product storage product = products[_id];
         //
         string memory logContent = "Product has changes: ";
@@ -100,6 +116,20 @@ contract MainSystem is ERC721 {
         if (product.saleDate != _saleDate) {
 
         }
+        console.log("product.userId", product.userId);
+        console.log("userContract", address(userContract));
+        string memory oldUsername = userContract.getUsernamesByAddress(product.userId);
+        string memory newUsername = userContract.getUsernamesByAddress(_userId);
+
+//        console.log("oldAddress", oldUsername);
+//        console.log("newAddress", newUsername);
+        if (keccak256(abi.encodePacked(oldUsername)) != keccak256(abi.encodePacked(newUsername))) {
+            logContent = string(abi.encodePacked(
+                logContent,
+                "ownership changes from '", oldUsername,
+                "' to '", newUsername, "', "
+            ));
+        }
 //        // Loại bỏ dấu ',' cuối cùng nếu có
         if (bytes(logContent).length > 0 && bytes(logContent)[bytes(logContent).length - 1] == ',') {
             bytes memory trimmedBytes = new bytes(bytes(logContent).length - 2);
@@ -109,9 +139,9 @@ contract MainSystem is ERC721 {
             logContent = string(trimmedBytes);
         }
         if (bytes(logContent).length > 0) {
-            emit ProductUpdate(_id, _productCode,_title, _category, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
+            emit ProductUpdate(_id, _productCode, _title, _category, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
             _addLog(logContent, _supplier, _id);
-            product.productCode=_productCode;
+            product.productCode = _productCode;
             product.title = _title;
             product.category = _category;
             product.pricePerKg = _pricePerKg;
@@ -121,6 +151,7 @@ contract MainSystem is ERC721 {
             product.supplier = _supplier;
             product.farmLocation = _farmLocation;
             product.saleDate = _saleDate;
+            product.userId = _userId;
             bytes32 hash = _calculateHash(_productCode, _supplier);
             productHashes[_id] = hash;
         }
@@ -130,7 +161,7 @@ contract MainSystem is ERC721 {
         uint timestamp = block.timestamp;
         Log memory newLog = Log(logCount, timestamp, _content, _sender, _productId);
         logs.push(newLog);
-        emit LogInserted(logCount , timestamp, _sender, _productId);
+        emit LogInserted(logCount, timestamp, _sender, _productId);
         logCount++;
 
     }
@@ -145,11 +176,11 @@ contract MainSystem is ERC721 {
         return (log.id, log.timestamp, log.content, log.sender, log.productId);
     }
 
-//    function debugLog(uint _index) public view returns (string memory) {
-//        require(_index < logs.length, "Invalid log index");
-//        Log memory log= logs[_index];
-//        return string(abi.encodePacked(log.content));
-//    }
+    function debugLog(uint _index) public view returns (string memory) {
+        require(_index < logs.length, "Invalid log index");
+        Log memory log = logs[_index];
+        return string(abi.encodePacked(log.content));
+    }
 
     function getProductCount() public view returns (uint){
         return productCount;
@@ -158,10 +189,10 @@ contract MainSystem is ERC721 {
 //    function getAllProducts() public view returns (Product[] memory) {
 //        return products;
 //    }
-    function getProduct(uint _id) public view returns (uint,string memory, string memory, string memory,string memory, uint, uint, uint, uint, string memory, string memory,uint256, address, bytes32){
+    function getProduct(uint _id) public view returns (uint, string memory, string memory, string memory, string memory, uint, uint, uint, uint, string memory, string memory, uint256, address, bytes32){
         Product memory product = products[_id];
         bytes32 hash = productHashes[_id];
-        return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation,product.saleDate, product.userId, hash);
+        return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.saleDate, product.userId, hash);
     }
 
     function _calculateHash(string memory _productCode, string memory _supplier) public pure returns (bytes32) {

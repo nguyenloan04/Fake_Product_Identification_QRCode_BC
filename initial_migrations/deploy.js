@@ -71,7 +71,8 @@ copyAbi("User");
 
 // Ghi owner vào .env
 upsertEnv("VITE_CONTRACT_OWNER", deployer.address);
-
+// set user contract
+await mainSystem.setUserContractAddress(user.address);
 // Danh sách các tài khoản
 const accounts = await ethers.provider.listAccounts();
 for (const account of accounts) {

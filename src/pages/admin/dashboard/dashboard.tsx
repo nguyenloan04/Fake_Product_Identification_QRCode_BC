@@ -22,7 +22,9 @@ const Dashboard = () => {
   }, []);
 
   const navigate = useNavigate();
-
+  const handleEdit = (id: number) => {
+    navigate(`/admin/product/edit/${id}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -39,11 +41,33 @@ const Dashboard = () => {
 
       <div className="space-y-2">
         <h2 className="text-lg font-semibold">Danh sách sản phẩm</h2>
-        <ul className="divide-y border rounded">
+        <div className="space-y-4">
           {products.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-        </ul>
+            <div
+              key={p.id}
+              className="flex justify-between items-center border rounded-lg p-4 shadow bg-white"
+            >
+              <div className="flex-1">
+                <ProductCard product={p} />
+              </div>
+
+              <div className="flex flex-col gap-2 ml-4">
+                <button
+                  onClick={() => handleEdit(p.id)}
+                  className="px-4 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Sửa
+                </button>
+                <button
+                  // onClick={() => handleDelete(p.id)}
+                  className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                  Xoá
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

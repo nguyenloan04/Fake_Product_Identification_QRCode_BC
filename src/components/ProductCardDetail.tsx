@@ -38,7 +38,7 @@ ${logs.join("\n\n")}
               <p><strong>Đã bán:</strong> {product.unitSold.toLocaleString()} kg</p>
               <p><strong>Còn lại:</strong> {product.unitOnHand.toLocaleString()} kg</p>
               <p><strong>Nhà cung cấp:</strong> {product.supplier}</p>
-              <p><strong>Nơi trồng:</strong> {product.farmLocation}</p>
+              <p><strong>Nơi sản xuất:</strong> {product.farmLocation}</p>
               <p><strong>Ngày bán:</strong> {product.saleDate.toLocaleDateString()}</p>
           </div>
       </div>

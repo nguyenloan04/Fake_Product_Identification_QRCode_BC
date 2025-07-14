@@ -14,6 +14,7 @@ export type ProductType = ProductCardType & {
   supplier: string;
   farmLocation: string;
   saleDate: Date;
+  owner: string;
   productHash: string;
 };
 

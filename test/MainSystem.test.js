@@ -6,86 +6,100 @@ const { ethers } = hardhat;
 const { expect } = chai;
 const { utils } = util;
 
-describe("MainSystem", async () => {
+describe("MainSystem", function () {
   let mainSystem;
-  let deployer, buyer;
+  let userContract;
+  let deployer;
+  let buyer;
 
-  // beforeEach(async () => {
-  //   [deployer, buyer] = await ethers.getSigners();
-  //   const MainSystem = await ethers.getContractFactory("MainSystem");
-  //   mainSystem = await MainSystem.deploy("MainSystem", "MS");
-  //   await mainSystem.deployed();
-  //   console.log("✅ Contract deployed at:", await mainSystem.address);
-  //   // Danh sách các tài khoản
-  //   const accounts = await ethers.provider.listAccounts();
-  //   for (const account of accounts) {
-  //     const balance = await ethers.provider.getBalance(account);
-  //     console.log(`${account}: ${utils.formatEther(balance)} ETH`);
-  //   }
-  // });
-  describe("Deployment", () => {
-    it("Set name", async () => {
-      let name = await mainSystem.name();
-      expect(name).equal("MainSystem");
-    });
-    it("Set symbol", async () => {
-      let symbol = await mainSystem.symbol();
-      expect(symbol).equal("MS");
-    });
+  beforeEach(async function () {
+    [deployer, buyer] = await ethers.getSigners();
 
-    it("Create new product", async () => {
-      const ownerAddress = deployer.address;
-      const title = "Lamb";
-      const category = "Livestock";
-      const pricePerKg = 14;
-      const unitsShippedKg = 19224;
-      const unitsSoldKg = 14905;
-      const unitsOnHandKg = 4319;
-      const supplier = "Organic Meet Co.";
-      const farmLocation = "O'Reillyboro,OR";
-      const saleDate = Math.floor(new Date("2022-07-04").setUTCHours(0, 0, 0, 0) / 1000);
-      console.log(typeof saleDate);
-      //
-      const result = await mainSystem.createProduct(title, category, pricePerKg, unitsShippedKg, unitsSoldKg,
-        unitsOnHandKg, supplier, farmLocation, saleDate, ownerAddress);
-      await mainSystem.createProduct(title, category, pricePerKg, unitsShippedKg, unitsSoldKg,
-        unitsOnHandKg, supplier, farmLocation, saleDate, ownerAddress);
-      const productCount = await mainSystem.productCount();
-      expect(productCount).to.be.equal(2);
-      // console.log(productCount);
+    // Deploy User.sol
+    const User = await ethers.getContractFactory("User");
+    userContract = await User.deploy();
+    await userContract.deployed();
 
+    // Deploy MainSystem
+    const MainSystem = await ethers.getContractFactory("MainSystem");
+    mainSystem = await MainSystem.deploy("MainSystem", "MS");
+    await mainSystem.deployed();
 
-      // update
-      const id = 0;
-      // const title= "Lamb";
-      // const category="LiveStock";
-      const newPricePerKg = 15;
-      const newSupplier = "Organic Meet Company";
-      // const farmLocation = "O'Reillyboro,OR";
-      const newSaleDate = Math.floor(new Date("2022-11-04").setUTCHours(0, 0, 0, 0) / 1000);
-      //
-      const productByIndex = await mainSystem.getProduct(id);
-      const oldTitle = productByIndex[1];
-      const oldCategory = productByIndex[2];
-      const oldUnitShippedKg = productByIndex[4];
-      const oldUnitSoldKg = productByIndex[5];
-      const olfUnitOnHandKg = productByIndex[6];
-      const oldFarmLocation = productByIndex[8];
+    // Gán địa chỉ contract user
+    await mainSystem.setUserContractAddress(userContract.address);
 
-      const updated = await mainSystem.updateProduct(id, oldTitle, oldCategory, newPricePerKg, oldUnitShippedKg, oldUnitSoldKg, olfUnitOnHandKg, newSupplier, oldFarmLocation, newSaleDate, ownerAddress);
-      // console.log(await mainSystem.getProduct(id));
-      const logByIndex = await mainSystem.getLog(1);
+    // Đăng ký người dùng deployer
+    await userContract.connect(deployer).registerUser(
+      "deployeruser",
+      "hashedpass",
+      "Deployer Name",
+      "ABC123",
+      "1999-01-01",
+      "deployer@email.com",
+      1
+    );
 
-      // console.log(typeof logByIndex[2]);
-      // console.log(logByIndex)
-      // console.log(ethers.utils.parseBytes32String(logByIndex[2].length))
-      console.log(await mainSystem.debugLog(2));
-      // const trimmedContent = contentBytes.length > 256 ? contentBytes.slice(0, 256) : contentBytes;
-     // console.log(await mainSystem.debugLog(1))
-      // console.log(new Uint8Array(logByIndex[2]))
-    });
-
+    // Kiểm tra mapping tồn tại
+    const checkUsername = await userContract.getUsernamesByAddress(deployer.address);
+    expect(checkUsername).to.equal("deployeruser");
   });
 
+  it("Create and update product", async function () {
+    const owner = deployer.address;
 
+    const title = "Lamb";
+    const category = "Livestock";
+    const image = "https://img.com/lamb.jpg";
+    const price = 14000;
+    const shipped = 19224;
+    const sold = 14905;
+    const onHand = 4319;
+    const supplier = "Organic Co.";
+    const farm = "Oregon";
+    const saleDate = Math.floor(new Date("2022-07-04").getTime() / 1000); // 1656892800
+
+    // Create product
+    await mainSystem.createProduct(
+      "code-001",
+      title,
+      category,
+      image,
+      price,
+      shipped,
+      sold,
+      onHand,
+      supplier,
+      farm,
+      saleDate,
+      owner
+    );
+
+    const count = await mainSystem.getProductCount();
+    expect(count).to.equal(1);
+
+    // Cập nhật product
+    const updatedSupplier = "New Supplier";
+    const updatedSaleDate = saleDate + 86400; // +1 ngày
+
+    const tx = await mainSystem.updateProduct(
+      0,
+      "code-001",
+      title,
+      category,
+      price + 1000,
+      shipped,
+      sold,
+      onHand,
+      updatedSupplier,
+      farm,
+      updatedSaleDate,
+      owner
+    );
+    await tx.wait();
+
+    const product = await mainSystem.getProduct(0);
+    expect(product[9]).to.equal("New Supplier"); // supplier
+    expect(product[10]).to.equal("Oregon"); // farmLocation
+
+  });
 });

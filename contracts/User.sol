@@ -100,4 +100,11 @@ contract User {
     function hashPassword(string memory _password) public pure returns (bytes32) {
         return keccak256(abi.encodePacked(_password));
     }
+    /// Lấy username từ địa chỉ ví
+    function getUsernamesByAddress(address _wallet) public view returns (string memory) {
+        return usernamesByAddress[_wallet];
+    }
+    function getWalletByUsername(string memory _username) public view returns (address) {
+        return usersByUsername[_username].wallet;
+    }
 }

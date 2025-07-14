@@ -59,4 +59,25 @@ export const registerUser = async (
   );
   await tx.wait();
 };
+export const isUsernameTaken = async (username: string): Promise<boolean> => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, UserABI, provider);
+  const user = await contract.getUserByUsername(username);
+  return !!user && user.username !== "";
+};
 
+export const getAddressByUsername = async (username: string): Promise<string> => {
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, UserABI, provider);
+  const user = await contract.getUserByUsername(username);
+  return user[8]; // user.wallet
+};
+export const getUsernameByWallet = async (wallet: string): Promise<string> => {
+  if (!window.ethereum) throw new Error("MetaMask not found");
+
+  const provider = new ethers.providers.Web3Provider(window.ethereum);
+  const contract = new ethers.Contract(CONTRACT_ADDRESS, UserABI, provider);
+
+  const username = await contract.getUsernamesByAddress(wallet);
+  return username;
+};
