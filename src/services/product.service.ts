@@ -25,7 +25,7 @@ export const getProductById = async (
     const signer = provider.getSigner();
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ProductManagerABI, signer);
     const product = await contract.getProduct(id);
-    const productHash = await contract.getProductHash(id);
+    // const productHash = await contract.getProductHash(id);
     console.log(product);
     if (!product) {
       throw new Error("404");
@@ -45,7 +45,7 @@ export const getProductById = async (
       farmLocation: product[10].toString(),
       saleDate: new Date(product[11].toNumber() * 1000),
       owner: oldOwner,
-      productHash: productHash.toString()
+      // productHash: productHash.toString()
     };
   } catch (e) {
     throw e;
@@ -244,6 +244,5 @@ export const updateProduct = async (product: {
     product.farmLocation,
     Math.floor(saleDateObj.getTime() / 1000),
     userIdAddress,
-  // { gasLimit: 500000 }
   );
 };

@@ -15,7 +15,6 @@ export type ProductType = ProductCardType & {
   farmLocation: string;
   saleDate: Date;
   owner: string;
-  productHash: string;
 };
 
 export type ProductDataLoader = Record<

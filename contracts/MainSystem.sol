@@ -189,10 +189,10 @@ contract MainSystem is ERC721 {
 //    function getAllProducts() public view returns (Product[] memory) {
 //        return products;
 //    }
-    function getProduct(uint _id) public view returns (uint, string memory, string memory, string memory, string memory, uint, uint, uint, uint, string memory, string memory, uint256, address, bytes32){
+    function getProduct(uint _id) public view returns (uint, string memory, string memory, string memory, string memory, uint, uint, uint, uint, string memory, string memory, uint256, address){
         Product memory product = products[_id];
-        bytes32 hash = productHashes[_id];
-        return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.saleDate, product.userId, hash);
+//        bytes32 hash = productHashes[_id];
+        return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.saleDate, product.userId);
     }
 
     function _calculateHash(string memory _productCode, string memory _supplier) public pure returns (bytes32) {

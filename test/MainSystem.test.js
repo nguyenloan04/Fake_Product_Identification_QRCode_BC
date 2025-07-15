@@ -76,14 +76,14 @@ describe("MainSystem", function () {
 
     const count = await mainSystem.getProductCount();
     expect(count).to.equal(1);
-
+    console.log("First hash: ", await mainSystem.getProductHash(0))
     // Cập nhật product
     const updatedSupplier = "New Supplier";
     const updatedSaleDate = saleDate + 86400; // +1 ngày
 
     const tx = await mainSystem.updateProduct(
       0,
-      "code-001",
+      "code-121265678",
       title,
       category,
       price + 1000,
@@ -100,6 +100,6 @@ describe("MainSystem", function () {
     const product = await mainSystem.getProduct(0);
     expect(product[9]).to.equal("New Supplier"); // supplier
     expect(product[10]).to.equal("Oregon"); // farmLocation
-
+    console.log("Second hash: ", await mainSystem.getProductHash(0))
   });
 });
