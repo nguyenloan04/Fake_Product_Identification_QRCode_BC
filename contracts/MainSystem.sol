@@ -215,7 +215,12 @@ contract MainSystem is ERC721 {
     function bytesToString(bytes memory data) public pure returns (string memory) {
         return string(data);
     }
-
+    // hàm check qr code có phải giả hay không
+    function checkAuthProduct(uint _id, string memory _productCode, string memory _supplier) public view returns (bool){
+        bytes32 inputHash= keccak256(abi.encodePacked(_productCode, _supplier));
+        bytes32 authHash = productHashes[_id];
+        return inputHash == authHash;
+    }
     // coi lai ham nay
     function getProductByUserId(address _userId) public view returns (Product[] memory)  {
         uint counter = 0;

@@ -101,5 +101,6 @@ describe("MainSystem", function () {
     expect(product[9]).to.equal("New Supplier"); // supplier
     expect(product[10]).to.equal("Oregon"); // farmLocation
     console.log("Second hash: ", await mainSystem.getProductHash(0))
+    console.log(await mainSystem.checkAuthProduct(0,"code-121265678","New Supplier"))
   });
 });
