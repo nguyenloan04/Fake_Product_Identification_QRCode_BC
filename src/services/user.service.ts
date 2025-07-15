@@ -60,6 +60,7 @@ export const registerUser = async (
   await tx.wait();
 };
 export const isUsernameTaken = async (username: string): Promise<boolean> => {
+  if (!window.ethereum) throw new Error("MetaMask not found");
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, UserABI, provider);
   const user = await contract.getUserByUsername(username);
@@ -67,6 +68,7 @@ export const isUsernameTaken = async (username: string): Promise<boolean> => {
 };
 
 export const getAddressByUsername = async (username: string): Promise<string> => {
+  if (!window.ethereum) throw new Error("MetaMask not found");
   const provider = new ethers.providers.Web3Provider(window.ethereum);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, UserABI, provider);
   const user = await contract.getUserByUsername(username);
