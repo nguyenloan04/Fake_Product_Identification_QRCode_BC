@@ -1,59 +1,48 @@
-import {useState} from "react";
-import {Icon} from "@iconify/react";
-import {ProductType} from "@/types/product.type";
+import React, { useEffect, useState } from "react";
+import { ProductType } from "@/types/product.type";
+import { QRCodeSVG } from "qrcode.react";
+import { getLogsByProductId } from "@/services/product.service";
 
-const ProductCardDetail = ({ name, image,category,farmLocation,price,supplier}: ProductType) => {
-    const [quantity, setQuantity] = useState(1);
-
-    const handleIncrease = () => {
-        setQuantity(quantity + 1);
-    };
-
-    const handleDecrease = () => {
-        if (quantity > 1) setQuantity(quantity - 1);
-    };
-
-    return (
-        <div className="  bg-gray-100">
-            <div className="container flex">
-            <div className="flex-none my-5 relative overflow-hidden rounded-2xl max-h-[500px] w-1/2">
-                <img
-                    src={'/images/products/' + image}
-                    alt="Pomegranate"
-                    className="object-cover w-full h-full "
-                />
-                {/*function*/}
-                {/*hash*/}
-                <button className="absolute top-2 left-2 shadow rounded-xs">
-                    <Icon icon="clarity:qr-code-line" width="36" height="36"/>
-                </button>
-            </div>
-            <div className="flex flex-col justify-between px-10  w-1/2 my-24">
-                <h2 className="text-2xl font-semibold">{name}</h2>
-                <h3 className="text-xl font-semibold">Category:&nbsp; {category}</h3>
-                <div className="flex justify-start text-gray-600 ">
-                    <p className="mr-5">Supplier: <span className="font-semibold text-black">{supplier}</span>
-                    </p>
-                    <p className=" ">Farm location: <span className="font-semibold text-black">{farmLocation}</span></p>
-                </div>
-                <div className="flex items-center justify-start text-gray-600 ">
-                    <p className={""}> Price: &nbsp;</p>
-                    {/*pass price_per_kg*/}
-                    <p className="font-bold text-green-500">${price}/KG</p>
-                </div>
-                <div className="flex items-center mt-4">
-                    <span className="mr-2 mr-5">Weight:</span>
-                    <button onClick={handleDecrease} className="px-2 py-1 border rounded-md">-</button>
-                    <span className="mx-2">{quantity}</span>
-                    <button onClick={handleIncrease} className="px-2 py-1 border rounded-md">+</button>
-                </div>
-
-                <button className="mt-4 bg-[#37913a] text-white py-2 rounded-md hover:bg-[#2C742F]">
-                    Add to Cart
-                </button>
-            </div>
-            </div>
-        </div>
-    );
+interface Props {
+    product: ProductType;
 }
+
+const ProductCardDetail: React.FC<Props> = ({ product }) => {
+  const [logs, setLogs] = useState<string[]>([]);
+  useEffect(() => {
+    getLogsByProductId(product.id).then(setLogs);
+  }, [product.id]);
+
+  const qrValue = `
+Lịch sử thay đổi:
+${logs.join("\n\n")}
+`;
+    return (
+      <div className="rounded-lg p-6 border shadow space-y-4">
+          <div className="flex items-center gap-6">
+              <img
+                src={product.image}
+                alt={product.title}
+                className="w-48 h-48 rounded object-cover"
+              />
+              <QRCodeSVG
+                value={qrValue || "No hash"}
+                size={128}
+              />
+          </div>
+          <div className="grid grid-cols-2 gap-4 pt-4">
+              <p><strong>Tên:</strong> {product.title}</p>
+              <p><strong>Danh mục:</strong> {product.category}</p>
+              <p><strong>Giá:</strong> {product.price.toLocaleString()} VND/kg</p>
+              <p><strong>Vận chuyển:</strong> {product.unitShipped.toLocaleString()} kg</p>
+              <p><strong>Đã bán:</strong> {product.unitSold.toLocaleString()} kg</p>
+              <p><strong>Còn lại:</strong> {product.unitOnHand.toLocaleString()} kg</p>
+              <p><strong>Nhà cung cấp:</strong> {product.supplier}</p>
+              <p><strong>Nơi sản xuất:</strong> {product.farmLocation}</p>
+              <p><strong>Ngày bán:</strong> {product.saleDate.toLocaleDateString()}</p>
+          </div>
+      </div>
+    );
+};
+
 export default ProductCardDetail;

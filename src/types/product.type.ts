@@ -1,20 +1,23 @@
 export type ProductCardType = {
-  id: string;
-  name: string;
+  id: number;
+  title: string;
+  category: string;
   image: string;
   price: number;
 };
 
 export type ProductType = ProductCardType & {
-  category: string;
+  productCode: string;
   unitShipped: number;
+  unitSold: number;
   unitOnHand: number;
   supplier: string;
   farmLocation: string;
   saleDate: Date;
+  owner: string;
 };
 
 export type ProductDataLoader = Record<
-  string,
+  number,
   ProductType
 >;

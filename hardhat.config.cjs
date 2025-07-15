@@ -1,4 +1,7 @@
+const { config } = require("dotenv");
+config(); // nạp biến môi trường từ .env
 require("@nomicfoundation/hardhat-toolbox");
+require("@nomiclabs/hardhat-ethers");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -11,5 +14,12 @@ module.exports = {
       },
       viaIR: true  // Kích hoạt viaIR
     }
+  },
+  networks: {
+    sepolia: {
+      url: process.env.SEPOLIA_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY]
+    }
   }
 };
+

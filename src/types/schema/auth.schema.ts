@@ -1,10 +1,7 @@
 import z from "zod";
 
 export const LoginBodyReq = z.object({
-  email: z.string().email({
-    message:
-      "Please enter a valid email address.",
-  }),
+  username: z.string().min(1, "Không được để trống"),
   password: z.string(),
 });
 
@@ -37,17 +34,20 @@ const passwordSchema = z
 
 export const RegisterBodyReq = z
   .object({
-    email: z.string().email({
-      message:
-        "Please enter a valid email address.",
-    }),
+    username: z.string().min(1, "Không được để trống"),
     name: z.string().min(8),
     password: passwordSchema,
-    "confirm-password": z.string(),
+    authorizeId: z.string().min(12, "CCCD/CMND không được để trống"),
+    birthday: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Định dạng ngày sinh: YYYY-MM-DD"),
+    email: z.string().email("Email không hợp lệ"),
+    role: z.enum(["0", "1"], {
+      errorMap: () => ({ message: "Chọn vai trò hợp lệ" }),
+    }),
+    "confirmPassword": z.string(),
   })
   .refine(
     (data) =>
-      data.password === data["confirm-password"],
+      data.password === data["confirmPassword"],
     {
       message: "Passwords do not match",
       path: ["confirmPassword"],
