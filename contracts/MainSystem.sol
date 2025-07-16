@@ -72,7 +72,7 @@ contract MainSystem is ERC721 {
         //
         string memory logContent = string(abi.encodePacked(
             " Product has id: ", uint2String(productCount),
-            " Product code: ", _productCode,
+            " ,product code: ", _productCode,
             " ,product has name: ", _title,
             " ,category: ", _category,
             ", price : ", uint2String(_pricePerKg),
