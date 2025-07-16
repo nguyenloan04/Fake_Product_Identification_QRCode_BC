@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import jsQR from "jsqr";
 import extractDataFromQR from "@/services/qr.service";
+import { BrowserQRCodeReader } from '@zxing/browser'
 
 const Header = () => {
   const navigate = useNavigate();
@@ -35,33 +35,68 @@ const Header = () => {
 
     const image = new Image()
     image.src = URL.createObjectURL(file)
-    image.onload = () => {
-      const canvas = canvasRef.current!
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
+    image.onload = async () => {
+      try {
+        const codeReader = new BrowserQRCodeReader()
+        const result = await codeReader.decodeFromImageElement(image)
+        const qrData = result.getText()
 
-      canvas.width = image.width
-      canvas.height = image.height
-      ctx.drawImage(image, 0, 0)
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-      const result = jsQR(imageData.data, canvas.width, canvas.height)
+        if (qrData) {
+          // changeNotifyState(2)
+          await extractDataFromQR(qrData).then(result => {
+            if (result) changeNotifyState(4)
+            else changeNotifyState(3)
+          })
+            .catch(() => changeNotifyState(1))
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
+        } else {
+          changeNotifyState(1)
+        }
       }
-      if (result?.data) {
-        changeNotifyState(2)
-        const data = result.data
-        const extractResult = extractDataFromQR(data)
-
-        if (extractResult) changeNotifyState(4)
-        else changeNotifyState(3)
-
-      } else {
+      catch (err: unknown) {
         changeNotifyState(1)
       }
       turnOffNotification()
     }
+
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+
+
+
+    // const image = new Image()
+    // image.src = URL.createObjectURL(file)
+
+    // image.onload = async () => {
+    //   const canvas = canvasRef.current!
+    //   const ctx = canvas.getContext('2d')
+    //   if (!ctx) return
+
+    //   canvas.width = image.width
+    //   canvas.height = image.height
+    //   ctx.drawImage(image, 0, 0)
+    //   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+    //   const result = jsQR(imageData.data, canvas.width, canvas.height)
+
+    //   if (timeoutRef.current) {
+    //     clearTimeout(timeoutRef.current)
+    //   }
+
+    //   console.log(result)
+    //   if (result?.data) {
+    //     // changeNotifyState(2)
+    //     const data = result.data
+    //     const extractResult = await extractDataFromQR(data)
+
+    //     if (extractResult) changeNotifyState(4)
+    //     else changeNotifyState(3)
+
+    //   } else {
+    //     changeNotifyState(1)
+    //   }
+    //   turnOffNotification()
+    // }
   }
 
   const turnOffNotification = () => {
