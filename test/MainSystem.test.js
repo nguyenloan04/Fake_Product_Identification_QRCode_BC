@@ -101,6 +101,18 @@ describe("MainSystem", function () {
     expect(product[9]).to.equal("New Supplier"); // supplier
     expect(product[10]).to.equal("Oregon"); // farmLocation
     console.log("Second hash: ", await mainSystem.getProductHash(0))
-    console.log(await mainSystem.checkAuthProduct(0,"code-121265678","New Supplier"))
+    console.log(await mainSystem.checkAuthProduct(0,"code-121265678","New Supplier","Oregon"))
+    const logCount = await mainSystem.getLogsCount();
+    console.log(`Log của sản phẩm ID=0:`);
+    for (let i = 0; i < logCount; i++) {
+      const log = await mainSystem.getLog(i);
+      const logProductId = log[4].toNumber();
+      if (logProductId === 0) {
+        const timestamp = new Date(log[1].toNumber() * 1000).toLocaleString("vi-VN");
+        console.log(`🔹 Log #${log[0].toNumber()} - ${timestamp}`);
+        console.log(`  Nội dung: ${log[2].toString()}`);
+        console.log(`  Người gửi: ${log[3].toString()}`);
+      }
+    }
   });
 });

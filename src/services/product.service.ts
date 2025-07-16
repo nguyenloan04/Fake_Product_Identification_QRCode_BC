@@ -26,7 +26,7 @@ export const getProductById = async (
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ProductManagerABI, signer);
     const product = await contract.getProduct(id);
     // const productHash = await contract.getProductHash(id);
-    console.log(product);
+    // console.log(product);
     if (!product) {
       throw new Error("404");
     }
@@ -80,7 +80,7 @@ export const getAllProducts = async (): Promise<ProductCardType[]> => {
       price: product[5].toNumber()
     });
   }
-  console.log(products);
+  // console.log(products);
   return products;
 };
 
@@ -187,19 +187,19 @@ export const updateProduct = async (product: {
   // console.log("Amount:", count.toNumber())
   if (product.id >= count) throw new Error("Product ID không tồn tại trên chuỗi");
   const price = Math.floor(Number(product.price));
-  console.log("Đang cập nhật với dữ liệu:");
-  console.log("ID:", product.id);
-  console.log("productCode:", product.productCode);
-  console.log("title:", product.title);
-  console.log("category:", product.category);
-  console.log("price:", price);
-  console.log("unitShipped:", product.unitShipped);
-  console.log("unitSold:", product.unitSold);
-  console.log("unitOnHand:", product.unitOnHand);
-  console.log("supplier:", product.supplier);
-  console.log("farmLocation:", product.farmLocation);
-  console.log("saleDate:", Math.floor(saleDateObj.getTime() / 1000));
-  console.log("owner:", userIdAddress);
+  // console.log("Đang cập nhật với dữ liệu:");
+  // console.log("ID:", product.id);
+  // console.log("productCode:", product.productCode);
+  // console.log("title:", product.title);
+  // console.log("category:", product.category);
+  // console.log("price:", price);
+  // console.log("unitShipped:", product.unitShipped);
+  // console.log("unitSold:", product.unitSold);
+  // console.log("unitOnHand:", product.unitOnHand);
+  // console.log("supplier:", product.supplier);
+  // console.log("farmLocation:", product.farmLocation);
+  // console.log("saleDate:", Math.floor(saleDateObj.getTime() / 1000));
+  // console.log("owner:", userIdAddress);
   // console.log(JSON.stringify({
   //   id: product.id,
   //   title: product.title,

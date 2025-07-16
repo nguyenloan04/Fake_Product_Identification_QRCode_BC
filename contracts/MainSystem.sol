@@ -65,16 +65,23 @@ contract MainSystem is ERC721 {
 
     function createProduct(string memory _productCode, string memory _title, string memory _category, string memory _imageUrl, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
         products.push(Product(productCount, _productCode, _title, _category, _imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId));
-        bytes32 hash = _calculateHash(_productCode, _supplier);
+        bytes32 hash = _calculateHash(_productCode, _supplier, _farmLocation);
         productHashes[productCount] = hash;
         emit ProductCreated(productCount, _productCode, _title, _category, _imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
 
         //
         string memory logContent = string(abi.encodePacked(
-            " Product has name: ", _title,
+            " Product has id: ", uint2String(productCount),
+            " ,product code: ", _productCode,
+            " ,product has name: ", _title,
+            " ,category: ", _category,
             ", price : ", uint2String(_pricePerKg),
+            " ,unitsShippedKg: ", uint2String(_unitsShippedKg),
+            " unitsSoldKg: ", uint2String(_unitsSoldKg),
+            " ,unitsOnHand: ", uint2String(_unitsOnHandKg),
             ", Supplier: ", _supplier,
-            ", Farm Location: ", _farmLocation
+            ", Farm Location: ", _farmLocation,
+            ", sale date: ", formatTimestamp(_saleDate)
         ));
         _addLog(logContent, _supplier, productCount);
         productCount++;
@@ -87,22 +94,22 @@ contract MainSystem is ERC721 {
         //
         string memory logContent = "Product has changes: ";
         if (keccak256(abi.encodePacked(product.productCode)) != keccak256(abi.encodePacked(_productCode))) {
-            logContent = string(abi.encodePacked(logContent, "product code changes from '", product.productCode, "' to '", _productCode, "', "));
+            logContent = string(abi.encodePacked(logContent, "product code changes from (", product.productCode, ") to (", _productCode, "), "));
         }
         if (keccak256(abi.encodePacked(product.title)) != keccak256(abi.encodePacked(_title))) {
-
+            logContent = string(abi.encodePacked(logContent, "product name changes from (", product.title, ") to (", _title, "), "));
         }
         if (keccak256(abi.encodePacked(product.category)) != keccak256(abi.encodePacked(_category))) {
-
+            logContent = string(abi.encodePacked(logContent, "product category changes from (", product.category, ") to (", _category, "), "));
         }
         if (keccak256(abi.encodePacked(product.supplier)) != keccak256(abi.encodePacked(_supplier))) {
-            logContent = string(abi.encodePacked(logContent, "supplier changes from '", product.supplier, "' to '", _supplier, "', "));
+            logContent = string(abi.encodePacked(logContent, "supplier changes from (", product.supplier, ") to (", _supplier, "), "));
         }
         if (keccak256(abi.encodePacked(product.farmLocation)) != keccak256(abi.encodePacked(_farmLocation))) {
-            logContent = string(abi.encodePacked(logContent, "farm location changes from '", product.farmLocation, "' to '", _farmLocation, "', "));
+            logContent = string(abi.encodePacked(logContent, "farm location changes from (", product.farmLocation, ") to (", _farmLocation, "), "));
         }
         if (product.pricePerKg != _pricePerKg) {
-
+            logContent = string(abi.encodePacked(logContent, "price changes from (", uint2String(product.pricePerKg), ") to (", _uintToString(_pricePerKg), "), "));
         }
         if (product.unitsShippedKg != _unitsShippedKg) {
 
@@ -114,7 +121,9 @@ contract MainSystem is ERC721 {
 
         }
         if (product.saleDate != _saleDate) {
-
+            string memory oldSaleDate= formatTimestamp(product.saleDate);
+            string memory newSaleDate = formatTimestamp(_saleDate);
+            logContent = string(abi.encodePacked(logContent, "sale date changes from (", oldSaleDate, ") to (", newSaleDate, "), "));
         }
         console.log("product.userId", product.userId);
         console.log("userContract", address(userContract));
@@ -126,8 +135,8 @@ contract MainSystem is ERC721 {
         if (keccak256(abi.encodePacked(oldUsername)) != keccak256(abi.encodePacked(newUsername))) {
             logContent = string(abi.encodePacked(
                 logContent,
-                "ownership changes from '", oldUsername,
-                "' to '", newUsername, "', "
+                "ownership changes from (", oldUsername,
+                ") to (", newUsername, "), "
             ));
         }
 //        // Loại bỏ dấu ',' cuối cùng nếu có
@@ -152,7 +161,7 @@ contract MainSystem is ERC721 {
             product.farmLocation = _farmLocation;
             product.saleDate = _saleDate;
             product.userId = _userId;
-            bytes32 hash = _calculateHash(_productCode, _supplier);
+            bytes32 hash = _calculateHash(_productCode, _supplier, _farmLocation);
             productHashes[_id] = hash;
         }
     }
@@ -195,8 +204,8 @@ contract MainSystem is ERC721 {
         return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.saleDate, product.userId);
     }
 
-    function _calculateHash(string memory _productCode, string memory _supplier) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_productCode, _supplier));
+    function _calculateHash(string memory _productCode, string memory _supplier, string memory _farmLocation) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_productCode, _supplier, _farmLocation));
     }
 
     function getProductHash(uint _id) public view returns (bytes32)  {
@@ -216,8 +225,8 @@ contract MainSystem is ERC721 {
         return string(data);
     }
     // hàm check qr code có phải giả hay không
-    function checkAuthProduct(uint _id, string memory _productCode, string memory _supplier) public view returns (bool){
-        bytes32 inputHash= keccak256(abi.encodePacked(_productCode, _supplier));
+    function checkAuthProduct(uint _id, string memory _productCode, string memory _supplier, string memory _farmLocation) public view returns (bool){
+        bytes32 inputHash = _calculateHash(_productCode, _supplier, _farmLocation);
         bytes32 authHash = productHashes[_id];
         return inputHash == authHash;
     }
@@ -239,6 +248,56 @@ contract MainSystem is ERC721 {
         }
         return productsByUserId;
     }
+    // format date from uint to string in order to save log
+    function formatTimestamp(uint timestamp) public pure returns (string memory) {
+        (uint year, uint month, uint day) = _timestampToDate(timestamp);
+        return string(abi.encodePacked(
+            _padZero(day), "-", _padZero(month), "-", _uintToString(year)
+        ));
+    }
+
+// Tách timestamp thành ngày/tháng/năm
+    function _timestampToDate(uint timestamp) internal pure returns (uint, uint, uint) {
+        uint z = timestamp / 86400 + 719468;
+        uint era = (z >= 0 ? z : z - 146096) / 146097;
+        uint doe = z - era * 146097;
+        uint yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+        uint y = yoe + era * 400;
+        uint doy = doe - (365 * yoe + yoe / 4 - yoe / 100);
+        uint mp = (5 * doy + 2) / 153;
+        uint d = doy - (153 * mp + 2) / 5 + 1;
+        uint m = mp < 10 ? mp + 3 : mp - 9;
+        y = m <= 2 ? y + 1 : y;
+        return (y, m, d);
+    }
+
+// Thêm số 0 phía trước nếu cần
+    function _padZero(uint val) internal pure returns (string memory) {
+        return val < 10
+            ? string(abi.encodePacked("0", _uintToString(val)))
+            : _uintToString(val);
+    }
+
+// Convert uint → string
+    function _uintToString(uint v) internal pure returns (string memory str) {
+        if (v == 0) return "0";
+        uint j = v;
+        uint len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint k = len;
+        while (v != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(v - v / 10 * 10));
+            bstr[k] = bytes1(temp);
+            v /= 10;
+        }
+        return string(bstr);
+    }
+
     // tạo đối tượng lưu thông tin cố định khi mua hàng
     uint public purchaseCount = 0;
     mapping(uint => ProductPurchase) public productPurchases;

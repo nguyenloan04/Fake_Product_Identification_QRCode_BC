@@ -41,7 +41,7 @@ ${logs.join("\n\n")}
         <div className="md">
           <QRCodeSVG
             value={`${qrValue}`}
-            size={100}
+            size={129}
           />
         </div>
       </div>
