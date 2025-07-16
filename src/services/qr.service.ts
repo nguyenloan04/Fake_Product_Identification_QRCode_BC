@@ -1,4 +1,21 @@
-export default function extractDataFromQR(data: string): boolean {
+import { ethers } from "ethers";
+import ProductManagerABI from "@/abis/MainSystem.json";
+
+const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_MAINSYSTEM;
+export default async function extractDataFromQR(data: string): Promise<boolean> {
+    // Lấy ABI từ server
+    if (!window.ethereum) throw new Error("MetaMask not found");
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    // 👇 Bước kiểm tra + yêu cầu ví kết nối
+    const accounts = await provider.send("eth_requestAccounts", []);
+    if (accounts.length === 0) {
+        throw new Error("No MetaMask accounts found");
+    }
+
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ProductManagerABI, signer);
+    // Xử lý QR
     if (!data.startsWith("Lịch sử thay đổi:\nNội dung:")) return false
     const changedData = data.split(/\nNội dung:/).map(e => e.trim()).filter(Boolean)
     let lastProductCode = ""
@@ -32,6 +49,7 @@ export default function extractDataFromQR(data: string): boolean {
     }
 
     //Gọi API xuống server ở đây
+    const isAuth: boolean = await contract.checkAuthProduct(lastProductCode,lastSupplier)
     //return tạm
-    return false
+    return isAuth
 }
