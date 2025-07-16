@@ -94,22 +94,22 @@ contract MainSystem is ERC721 {
         //
         string memory logContent = "Product has changes: ";
         if (keccak256(abi.encodePacked(product.productCode)) != keccak256(abi.encodePacked(_productCode))) {
-            logContent = string(abi.encodePacked(logContent, "product code changes from '", product.productCode, "' to '", _productCode, "', "));
+            logContent = string(abi.encodePacked(logContent, "product code changes from (", product.productCode, ") to (", _productCode, "), "));
         }
         if (keccak256(abi.encodePacked(product.title)) != keccak256(abi.encodePacked(_title))) {
-            logContent = string(abi.encodePacked(logContent, "product name changes from '", product.title, "' to '", _title, "', "));
+            logContent = string(abi.encodePacked(logContent, "product name changes from (", product.title, ") to (", _title, "), "));
         }
         if (keccak256(abi.encodePacked(product.category)) != keccak256(abi.encodePacked(_category))) {
-            logContent = string(abi.encodePacked(logContent, "product category changes from '", product.category, "' to '", _category, "', "));
+            logContent = string(abi.encodePacked(logContent, "product category changes from (", product.category, ") to (", _category, "), "));
         }
         if (keccak256(abi.encodePacked(product.supplier)) != keccak256(abi.encodePacked(_supplier))) {
-            logContent = string(abi.encodePacked(logContent, "supplier changes from '", product.supplier, "' to '", _supplier, "', "));
+            logContent = string(abi.encodePacked(logContent, "supplier changes from (", product.supplier, ") to (", _supplier, "), "));
         }
         if (keccak256(abi.encodePacked(product.farmLocation)) != keccak256(abi.encodePacked(_farmLocation))) {
-            logContent = string(abi.encodePacked(logContent, "farm location changes from '", product.farmLocation, "' to '", _farmLocation, "', "));
+            logContent = string(abi.encodePacked(logContent, "farm location changes from (", product.farmLocation, ") to (", _farmLocation, "), "));
         }
         if (product.pricePerKg != _pricePerKg) {
-            logContent = string(abi.encodePacked(logContent, "price changes from '", uint2String(product.pricePerKg), "' to '", _uintToString(_pricePerKg), "', "));
+            logContent = string(abi.encodePacked(logContent, "price changes from (", uint2String(product.pricePerKg), ") to (", _uintToString(_pricePerKg), "), "));
         }
         if (product.unitsShippedKg != _unitsShippedKg) {
 
@@ -123,7 +123,7 @@ contract MainSystem is ERC721 {
         if (product.saleDate != _saleDate) {
             string memory oldSaleDate= formatTimestamp(product.saleDate);
             string memory newSaleDate = formatTimestamp(_saleDate);
-            logContent = string(abi.encodePacked(logContent, "sale date changes from '", oldSaleDate, "' to '", newSaleDate, "', "));
+            logContent = string(abi.encodePacked(logContent, "sale date changes from (", oldSaleDate, ") to (", newSaleDate, "), "));
         }
         console.log("product.userId", product.userId);
         console.log("userContract", address(userContract));
@@ -135,8 +135,8 @@ contract MainSystem is ERC721 {
         if (keccak256(abi.encodePacked(oldUsername)) != keccak256(abi.encodePacked(newUsername))) {
             logContent = string(abi.encodePacked(
                 logContent,
-                "ownership changes from '", oldUsername,
-                "' to '", newUsername, "', "
+                "ownership changes from (", oldUsername,
+                ") to (", newUsername, "), "
             ));
         }
 //        // Loại bỏ dấu ',' cuối cùng nếu có

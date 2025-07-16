@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import extractDataFromQR from "@/services/qr.service";
-import { BrowserQRCodeReader } from '@zxing/browser'
+import { BrowserQRCodeReader } from "@zxing/browser";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -14,55 +14,60 @@ const Header = () => {
   };
 
 
-
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const timeoutRef = useRef<number | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const timeoutRef = useRef<number | null>(null);
   const listNotifyState = {
     default: 0,
     loadFailed: 1,
     loadSuccess: 2,
     verifyFailed: 3,
-    verifySuccess: 4,
-  }
+    verifySuccess: 4
+  };
 
-  const [notifyState, changeNotifyState] = useState(listNotifyState.default)
+  const [notifyState, changeNotifyState] = useState(listNotifyState.default);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     //Không có file hoặc ref
-    if (!file || !canvasRef.current) return
+    if (!file || !canvasRef.current) return;
 
-    const image = new Image()
-    image.src = URL.createObjectURL(file)
+    const image = new Image();
+    image.src = URL.createObjectURL(file);
     image.onload = async () => {
       try {
-        const codeReader = new BrowserQRCodeReader()
-        const result = await codeReader.decodeFromImageElement(image)
-        const qrData = result.getText()
+        const codeReader = new BrowserQRCodeReader();
+        const result = await codeReader.decodeFromImageElement(image);
+        const qrData = result.getText();
 
         if (qrData) {
           // changeNotifyState(2)
           await extractDataFromQR(qrData).then(result => {
-            if (result) changeNotifyState(4)
-            else changeNotifyState(3)
+            if (result) changeNotifyState(4);
+            else changeNotifyState(3);
           })
-            .catch(() => changeNotifyState(1))
+            .catch(() => {
+              changeNotifyState(1);
+            });
 
         } else {
-          changeNotifyState(1)
+          changeNotifyState(1);
+        }
+      } catch (err: unknown) {
+        changeNotifyState(1);
+        if (err instanceof Error) {
+          console.error("Lỗi:", err.message);
+          console.error("Stack trace:", err.stack);
+        } else {
+          console.error("Lỗi không xác định:", err);
         }
       }
-      catch (err: unknown) {
-        changeNotifyState(1)
-      }
-      turnOffNotification()
-    }
+      turnOffNotification();
+    };
 
     if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
+      clearTimeout(timeoutRef.current);
     }
-
 
 
     // const image = new Image()
@@ -97,17 +102,17 @@ const Header = () => {
     //   }
     //   turnOffNotification()
     // }
-  }
+  };
 
   const turnOffNotification = () => {
     timeoutRef.current = window.setTimeout(() => {
-      changeNotifyState(0)
-    }, 2000)
-  }
+      changeNotifyState(0);
+    }, 2000);
+  };
 
   const handleImageChooser = () => {
-    inputRef.current?.click()
-  }
+    inputRef.current?.click();
+  };
 
   // Khi load header, kiểm tra user đã login chưa
   useEffect(() => {
@@ -133,8 +138,8 @@ const Header = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <canvas ref={canvasRef} style={{ display: 'none' }} />
-          <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
+          <canvas ref={canvasRef} style={{ display: "none" }} />
+          <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
           <button
             className="px-4 py-2 bg-[#07a40a] text-white rounded-md hover:bg-green-600 pointer cursor-pointer"
             onClick={handleImageChooser}
@@ -172,8 +177,9 @@ const Header = () => {
       </article>
 
       {notifyState === 0 ? <></> :
-        <div className={notifyState % 2 === 0 ? "bg-[#07a40a] text-white rounded p-2 px-3" : "bg-[#e7000b] text-white rounded p-2 px-3"}
-          style={{ position: 'fixed', bottom: '2rem', zIndex: '100' }}
+        <div
+          className={notifyState % 2 === 0 ? "bg-[#07a40a] text-white rounded p-2 px-3" : "bg-[#e7000b] text-white rounded p-2 px-3"}
+          style={{ position: "fixed", bottom: "2rem", zIndex: "100" }}
         >
           {notifyState / 2 <= 1 ? "Quét QR " : "Xác thực "}
           {notifyState % 2 === 0 ? "thành công" : "thất bại"}
@@ -181,7 +187,6 @@ const Header = () => {
           {notifyState === 4 && ", QR của sản phẩm được xác nhận là thật"}
         </div>
       }
-
 
 
     </header>
