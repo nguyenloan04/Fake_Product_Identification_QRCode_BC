@@ -27,7 +27,7 @@ ${logs.join("\n\n")}
               />
               <QRCodeSVG
                 value={qrValue || "No hash"}
-                size={250}
+                size={300}
               />
           </div>
           <div className="grid grid-cols-2 gap-4 pt-4">

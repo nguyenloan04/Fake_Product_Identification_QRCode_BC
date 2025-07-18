@@ -65,7 +65,7 @@ contract MainSystem is ERC721 {
 
     function createProduct(string memory _productCode, string memory _title, string memory _category, string memory _imageUrl, uint _pricePerKg, uint _unitsShippedKg, uint _unitsSoldKg, uint _unitsOnHandKg, string memory _supplier, string memory _farmLocation, uint _saleDate, address _userId) public {
         products.push(Product(productCount, _productCode, _title, _category, _imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId));
-        bytes32 hash = _calculateHash(_productCode, _supplier, _farmLocation);
+        bytes32 hash = _calculateHash(productCount,_productCode, _supplier, _farmLocation);
         productHashes[productCount] = hash;
         emit ProductCreated(productCount, _productCode, _title, _category, _imageUrl, _pricePerKg, _unitsShippedKg, _unitsSoldKg, _unitsOnHandKg, _supplier, _farmLocation, _saleDate, _userId);
 
@@ -161,7 +161,7 @@ contract MainSystem is ERC721 {
             product.farmLocation = _farmLocation;
             product.saleDate = _saleDate;
             product.userId = _userId;
-            bytes32 hash = _calculateHash(_productCode, _supplier, _farmLocation);
+            bytes32 hash = _calculateHash(_id,_productCode, _supplier, _farmLocation);
             productHashes[_id] = hash;
         }
     }
@@ -204,8 +204,8 @@ contract MainSystem is ERC721 {
         return (product.id, product.productCode, product.title, product.category, product.imageUrl, product.pricePerKg, product.unitsShippedKg, product.unitsSoldKg, product.unitsOnHandKg, product.supplier, product.farmLocation, product.saleDate, product.userId);
     }
 
-    function _calculateHash(string memory _productCode, string memory _supplier, string memory _farmLocation) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_productCode, _supplier, _farmLocation));
+    function _calculateHash(uint _id,string memory _productCode, string memory _supplier, string memory _farmLocation) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_id, _productCode, _supplier, _farmLocation));
     }
 
     function getProductHash(uint _id) public view returns (bytes32)  {
@@ -226,7 +226,7 @@ contract MainSystem is ERC721 {
     }
     // hàm check qr code có phải giả hay không
     function checkAuthProduct(uint _id, string memory _productCode, string memory _supplier, string memory _farmLocation) public view returns (bool){
-        bytes32 inputHash = _calculateHash(_productCode, _supplier, _farmLocation);
+        bytes32 inputHash = _calculateHash(_id,_productCode, _supplier, _farmLocation);
         bytes32 authHash = productHashes[_id];
         return inputHash == authHash;
     }

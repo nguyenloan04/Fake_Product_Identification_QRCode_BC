@@ -27,13 +27,13 @@ export default async function extractDataFromQR(data: string): Promise<boolean> 
     let lastSupplier = ""
     let lastLocation = ""
 
-    for (let i = changedData.length - 1; i >= 1; i--) {
+    for (let i = changedData.length - 1; i >= 2; i--) {
         const entry = changedData[i]
-
-        if (productId === -1) {
-            const match = entry.match(/Product has id:\s*(\d+)/);
-            if (match) productId = parseInt(match[1], 10);
-        }
+        console.log("Changes entry:", entry);
+        // if (productId === -1) {
+        //     const match = entry.match(/Product has id:\s*(\d+)/);
+        //     if (match) productId = parseInt(match[1], 10);
+        // }
 
         if (!lastProductCode) {
             const match = entry.match(/product code changes from \((.*?)\) to \((.*?)\)/);
@@ -54,7 +54,12 @@ export default async function extractDataFromQR(data: string): Promise<boolean> 
     }
 
     //Nếu k có thay đổi thì lấy ở gốc
-    const original = changedData[0]
+    const original = changedData[1]
+    console.log("Original entry:", original);
+    if (productId === -1) {
+        const match = original.match(/Product has id:\s*(\d+)/);
+        if (match) productId = parseInt(match[1], 10);
+    }
     if (!lastProductCode) {
         const match = original.match(/Product code:\s*'(.*?)'/)
         if (match) lastProductCode = match[1]
@@ -67,7 +72,7 @@ export default async function extractDataFromQR(data: string): Promise<boolean> 
 
     if (!lastLocation) {
         const match = original.match(/Farm Location:\s*(.*?)(?=,|$)/)
-        if (match) lastSupplier = match[1].trim()
+        if (match) lastLocation = match[1].trim()
     }
     console.log(productId)
     console.log(lastProductCode)
