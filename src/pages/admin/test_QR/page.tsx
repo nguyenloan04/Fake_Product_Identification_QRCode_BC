@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import Dashboard from "./dashboard";
 import { useNavigate } from "react-router-dom";
+import QRCodeGenerate from "@/components/QRCodeGenerate";
 
-const AdminPage = () => {
+const QRCodePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -11,7 +11,7 @@ const AdminPage = () => {
       navigate("/"); // hoặc về trang chính
     }
   }, []);
-  return <Dashboard />;
+  return <QRCodeGenerate />;
 };
 
-export default AdminPage;
+export default QRCodePage;

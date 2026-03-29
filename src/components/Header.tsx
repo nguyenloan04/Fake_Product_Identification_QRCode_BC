@@ -6,7 +6,7 @@ import { BrowserQRCodeReader } from "@zxing/browser";
 
 const Header = () => {
   const navigate = useNavigate();
-  const [userInfo, setUserInfo] = useState<{ username: string } | null>(null);
+  const [userInfo, setUserInfo] = useState<{ username: string; role: number } | null>(null);
 
   const handleLogout = () => {
     sessionStorage.removeItem("userInfo");
@@ -39,7 +39,6 @@ const Header = () => {
         const codeReader = new BrowserQRCodeReader();
         const result = await codeReader.decodeFromImageElement(image);
         const qrData = result.getText();
-
         if (qrData) {
           // changeNotifyState(2)
           await extractDataFromQR(qrData).then(result => {
@@ -120,7 +119,7 @@ const Header = () => {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        setUserInfo({ username: parsed.username });
+        setUserInfo({ username: parsed.username, role: parsed.role });
       } catch {
         sessionStorage.removeItem("userInfo");
       }
@@ -147,7 +146,15 @@ const Header = () => {
             Xác thực QR sản phẩm
           </button>
 
-          {/* ✅ Nếu đã login */}
+          {userInfo?.role === 1 && (
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 cursor-pointer"
+              onClick={() => navigate("generate-qr")}
+            >
+              Tạo mã QR
+            </button>
+          )}
+
           {userInfo ? (
             <>
               <span className="text-[#2D5F4D] font-semibold">
